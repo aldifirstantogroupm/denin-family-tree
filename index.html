@@ -15,8 +15,7 @@
 
     /* ── Loading overlay ── */
     #loading-overlay {
-      position: fixed; inset: 0;
-      background: rgb(33,33,33);
+      position: fixed; inset: 0; background: rgb(33,33,33);
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       z-index: 9999; gap: 16px;
@@ -32,200 +31,224 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Error box ── */
     #error-box {
-      display: none;
-      color: #ff6b6b; padding: 40px;
+      display: none; color: #ff6b6b; padding: 40px;
       font-family: 'DM Mono', monospace; font-size: 13px;
-      line-height: 1.8; background: rgb(33,33,33);
-      min-height: 100vh;
+      line-height: 1.8; background: rgb(33,33,33); min-height: 100vh;
     }
 
-    /* ── Chart wrapper ── */
-    #FamilyChart {
-      width: 100%; height: 100vh;
-      background-color: rgb(33,33,33);
-      display: none;
-    }
+    #FamilyChart { width: 100%; height: 100vh; background-color: rgb(33,33,33); display: none; }
 
     /* ══════════════════════════════════════
        SEARCH BAR
     ══════════════════════════════════════ */
     #search-container {
-      position: fixed;
-      top: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1000;
-      width: min(480px, calc(100vw - 32px));
+      position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+      z-index: 1000; width: min(480px, calc(100vw - 32px));
     }
-
-    #search-wrap {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
+    #search-wrap { position: relative; display: flex; align-items: center; }
     #search-icon {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      pointer-events: none;
-      color: rgba(255,255,255,0.35);
-      display: flex;
-      align-items: center;
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      pointer-events: none; color: rgba(255,255,255,0.35); display: flex; align-items: center;
     }
-
     #search-input {
-      width: 100%;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 10px;
-      color: #fff;
-      font-family: 'DM Mono', monospace;
-      font-size: 13px;
-      letter-spacing: 0.04em;
-      padding: 11px 40px 11px 40px;
-      outline: none;
+      width: 100%; background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 10px;
+      color: #fff; font-family: 'DM Mono', monospace; font-size: 13px;
+      letter-spacing: 0.04em; padding: 11px 40px 11px 40px; outline: none;
       transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     }
-    #search-input::placeholder {
-      color: rgba(255,255,255,0.28);
-      font-style: italic;
-    }
+    #search-input::placeholder { color: rgba(255,255,255,0.28); font-style: italic; }
     #search-input:focus {
-      background: rgba(255,255,255,0.11);
-      border-color: rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.11); border-color: rgba(255,255,255,0.3);
       box-shadow: 0 0 0 3px rgba(255,255,255,0.05), 0 8px 32px rgba(0,0,0,0.4);
     }
-
-    /* clear button */
     #search-clear {
-      position: absolute;
-      right: 12px;
-      top: 50%; transform: translateY(-50%);
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
       background: none; border: none; cursor: pointer;
-      color: rgba(255,255,255,0.35);
-      display: none;
-      align-items: center; justify-content: center;
-      padding: 2px;
-      transition: color 0.15s;
-      line-height: 0;
+      color: rgba(255,255,255,0.35); display: none;
+      align-items: center; justify-content: center; padding: 2px;
+      transition: color 0.15s; line-height: 0;
     }
     #search-clear:hover { color: rgba(255,255,255,0.75); }
     #search-clear.visible { display: flex; }
-
-    /* ── Dropdown results ── */
     #search-results {
-      position: absolute;
-      top: calc(100% + 8px);
-      left: 0; right: 0;
-      background: rgb(42,42,42);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 10px;
-      overflow: hidden;
+      position: absolute; top: calc(100% + 8px); left: 0; right: 0;
+      background: rgb(42,42,42); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px; overflow: hidden;
       box-shadow: 0 16px 48px rgba(0,0,0,0.6);
-      display: none;
-      max-height: 320px;
-      overflow-y: auto;
+      display: none; max-height: 320px; overflow-y: auto;
     }
     #search-results.open { display: block; }
-
     .search-result-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 11px 16px;
-      cursor: pointer;
-      transition: background 0.12s;
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 16px; cursor: pointer; transition: background 0.12s;
       border-bottom: 1px solid rgba(255,255,255,0.05);
     }
     .search-result-item:last-child { border-bottom: none; }
-    .search-result-item:hover,
-    .search-result-item.active { background: rgba(255,255,255,0.07); }
-
+    .search-result-item:hover, .search-result-item.active { background: rgba(255,255,255,0.07); }
     .result-avatar {
-      width: 34px; height: 34px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.1);
-      flex-shrink: 0;
+      width: 34px; height: 34px; border-radius: 50%;
+      background: rgba(255,255,255,0.1); flex-shrink: 0;
       display: flex; align-items: center; justify-content: center;
-      font-size: 14px; color: rgba(255,255,255,0.5);
-      overflow: hidden;
+      font-size: 14px; color: rgba(255,255,255,0.5); overflow: hidden;
     }
     .result-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-    .result-name {
-      font-size: 13px;
-      color: #fff;
-      letter-spacing: 0.03em;
-      line-height: 1.3;
-    }
-    .result-name em {
-      font-style: normal;
-      color: #f0c060;
-    }
-    .result-sub {
-      font-size: 11px;
-      color: rgba(255,255,255,0.38);
-      margin-top: 1px;
-      letter-spacing: 0.04em;
-    }
-
-    .search-no-results {
-      padding: 18px 16px;
-      font-size: 12px;
-      color: rgba(255,255,255,0.3);
-      text-align: center;
-      letter-spacing: 0.08em;
-      font-style: italic;
-    }
-
-    /* ── Toast notification ── */
+    .result-name { font-size: 13px; color: #fff; letter-spacing: 0.03em; line-height: 1.3; }
+    .result-name em { font-style: normal; color: #f0c060; }
+    .result-sub { font-size: 11px; color: rgba(255,255,255,0.38); margin-top: 1px; letter-spacing: 0.04em; }
+    .search-no-results { padding: 18px 16px; font-size: 12px; color: rgba(255,255,255,0.3); text-align: center; letter-spacing: 0.08em; font-style: italic; }
     #search-toast {
-      position: fixed;
-      bottom: 28px;
-      left: 50%;
+      position: fixed; bottom: 28px; left: 50%;
       transform: translateX(-50%) translateY(80px);
-      background: rgba(50,50,50,0.95);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 8px;
-      padding: 10px 20px;
-      font-size: 12px;
-      letter-spacing: 0.07em;
-      color: rgba(255,255,255,0.75);
-      backdrop-filter: blur(12px);
+      background: rgba(50,50,50,0.95); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px; padding: 10px 20px; font-size: 12px; letter-spacing: 0.07em;
+      color: rgba(255,255,255,0.75); backdrop-filter: blur(12px);
       transition: transform 0.35s cubic-bezier(.22,1,.36,1), opacity 0.35s;
-      opacity: 0;
-      z-index: 1001;
-      pointer-events: none;
+      opacity: 0; z-index: 1001; pointer-events: none;
     }
-    #search-toast.show {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-    }
-
-    /* scroll thin */
+    #search-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     #search-results::-webkit-scrollbar { width: 4px; }
     #search-results::-webkit-scrollbar-track { background: transparent; }
     #search-results::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
+
+    /* ══════════════════════════════════════
+       RELATIONSHIP FINDER — toggle button
+    ══════════════════════════════════════ */
+    #rel-toggle-btn {
+      position: fixed; bottom: 28px; right: 28px; z-index: 1000;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.75); cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    #rel-toggle-btn:hover {
+      background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.28); transform: scale(1.06);
+    }
+    #rel-toggle-btn.active {
+      background: rgba(240,192,96,0.15); border-color: rgba(240,192,96,0.4); color: #f0c060;
+    }
+
+    /* ══════════════════════════════════════
+       RELATIONSHIP FINDER — floating panel
+    ══════════════════════════════════════ */
+    #rel-panel {
+      position: fixed; bottom: 88px; right: 28px; z-index: 999;
+      width: 340px; background: rgb(38,38,38);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.7);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      display: none; flex-direction: column; overflow: hidden;
+      transform-origin: bottom right;
+    }
+    #rel-panel.open {
+      display: flex;
+      animation: panelOpen 0.25s cubic-bezier(.22,1,.36,1);
+    }
+    @keyframes panelOpen {
+      from { opacity: 0; transform: scale(0.88) translateY(12px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .rel-panel-header {
+      padding: 16px 18px 12px; border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .rel-panel-title {
+      font-size: 11px; letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.45); text-transform: uppercase;
+    }
+    .rel-panel-close {
+      background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.3); line-height: 0; padding: 2px;
+      transition: color 0.15s;
+    }
+    .rel-panel-close:hover { color: rgba(255,255,255,0.7); }
+
+    .rel-panel-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+
+    .rel-selector-row { display: flex; flex-direction: column; gap: 6px; }
+    .rel-selector-label { font-size: 10px; letter-spacing: 0.12em; color: rgba(255,255,255,0.3); text-transform: uppercase; }
+    .rel-select-wrap { position: relative; }
+    .rel-select-wrap::after {
+      content: ''; position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      width: 0; height: 0; border-left: 4px solid transparent;
+      border-right: 4px solid transparent; border-top: 5px solid rgba(255,255,255,0.35);
+      pointer-events: none;
+    }
+    .rel-select {
+      width: 100%; background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+      color: #fff; font-family: 'DM Mono', monospace; font-size: 12px;
+      padding: 9px 32px 9px 12px; outline: none; cursor: pointer;
+      appearance: none; -webkit-appearance: none;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .rel-select:focus { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.09); }
+    .rel-select option { background: rgb(42,42,42); color: #fff; }
+
+    .rel-swap-row { display: flex; justify-content: center; }
+    .rel-swap-btn {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; color: rgba(255,255,255,0.4); cursor: pointer;
+      padding: 5px 14px; font-size: 11px; font-family: 'DM Mono', monospace;
+      letter-spacing: 0.06em; transition: background 0.15s, color 0.15s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .rel-swap-btn:hover { background: rgba(255,255,255,0.09); color: rgba(255,255,255,0.7); }
+
+    .rel-find-btn {
+      width: 100%; background: rgba(240,192,96,0.12);
+      border: 1px solid rgba(240,192,96,0.3); border-radius: 8px;
+      color: #f0c060; font-family: 'DM Mono', monospace;
+      font-size: 12px; letter-spacing: 0.08em; padding: 10px;
+      cursor: pointer; transition: background 0.2s, border-color 0.2s;
+    }
+    .rel-find-btn:hover { background: rgba(240,192,96,0.2); border-color: rgba(240,192,96,0.5); }
+
+    /* result area */
+    .rel-result {
+      display: none; flex-direction: column; gap: 10px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 14px 18px 16px;
+    }
+    .rel-result.show {
+      display: flex;
+      animation: fadeSlideUp 0.3s cubic-bezier(.22,1,.36,1);
+    }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .rel-result-sentence {
+      font-size: 13px; line-height: 1.75; color: rgba(255,255,255,0.85); letter-spacing: 0.02em;
+    }
+    .rel-result-sentence strong { color: #f0c060; font-weight: 500; }
+    .rel-result-path {
+      font-size: 10px; color: rgba(255,255,255,0.25); letter-spacing: 0.05em;
+      line-height: 1.6; font-style: italic; padding-top: 2px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .rel-result-same { font-size: 12px; color: rgba(255,255,255,0.45); text-align: center; letter-spacing: 0.05em; }
+    .rel-result-error { font-size: 12px; color: rgba(255,100,100,0.75); letter-spacing: 0.04em; }
+    .rel-result-desc { font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 0.04em; }
   </style>
 </head>
 <body>
 
-<!-- Loading state -->
 <div id="loading-overlay">
   <div class="spinner"></div>
   <span>Loading family data…</span>
 </div>
 
-<!-- Error state -->
 <div id="error-box"></div>
 
-<!-- ══ Search bar ══ -->
+<!-- Search bar -->
 <div id="search-container" style="display:none;">
   <div id="search-wrap">
     <span id="search-icon">
@@ -234,13 +257,7 @@
         <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
       </svg>
     </span>
-    <input
-      id="search-input"
-      type="text"
-      placeholder="Search family member…"
-      autocomplete="off"
-      spellcheck="false"
-    />
+    <input id="search-input" type="text" placeholder="Search family member…" autocomplete="off" spellcheck="false"/>
     <button id="search-clear" title="Clear">
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
         <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -250,23 +267,74 @@
   <div id="search-results"></div>
 </div>
 
-<!-- Toast -->
 <div id="search-toast"></div>
 
 <!-- Chart -->
-<div id="FamilyChart" class="f3"
-     style="width:100%;height:100vh;margin:auto;background-color:rgb(33,33,33);color:#fff;display:none;">
+<div id="FamilyChart" class="f3" style="width:100%;height:100vh;background-color:rgb(33,33,33);display:none;"></div>
+
+<!-- Relationship finder toggle -->
+<button id="rel-toggle-btn" title="Cari hubungan keluarga">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="9" cy="8" r="3"/>
+    <circle cx="17" cy="8" r="3"/>
+    <path d="M3 21v-1a6 6 0 0 1 6-6h1"/>
+    <path d="M16 19l2 2 4-4"/>
+  </svg>
+</button>
+
+<!-- Relationship finder panel -->
+<div id="rel-panel">
+  <div class="rel-panel-header">
+    <span class="rel-panel-title">Hubungan Keluarga</span>
+    <button class="rel-panel-close" id="rel-panel-close">
+      <svg width="13" height="13" viewBox="0 0 12 12" fill="none">
+        <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="rel-panel-body">
+    <div class="rel-selector-row">
+      <span class="rel-selector-label">A — yang memanggil</span>
+      <div class="rel-select-wrap">
+        <select class="rel-select" id="rel-select-a">
+          <option value="">Pilih anggota keluarga…</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="rel-swap-row">
+      <button class="rel-swap-btn" id="rel-swap-btn">
+        <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M4 2v12M4 14l-3-3M4 14l3-3M12 14V2M12 2l-3 3M12 2l3 3"/>
+        </svg>
+        tukar A ↔ B
+      </button>
+    </div>
+
+    <div class="rel-selector-row">
+      <span class="rel-selector-label">B — yang dipanggil</span>
+      <div class="rel-select-wrap">
+        <select class="rel-select" id="rel-select-b">
+          <option value="">Pilih anggota keluarga…</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="rel-find-btn" id="rel-find-btn">Cari Hubungan →</button>
+  </div>
+
+  <div class="rel-result" id="rel-result"></div>
 </div>
 
 <script type="module">
 
 // ══════════════════════════════════════════════════════════
-//  ⚙️  SUPABASE CONFIG — replace with your own values
+//  ⚙️  SUPABASE CONFIG
 // ══════════════════════════════════════════════════════════
-const SUPABASE_URL     = 'https://esnnniiukcncralgssxl.supabase.co';
+const SUPABASE_URL      = 'https://esnnniiukcncralgssxl.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_atkQZKMKVaDU_m9V3d_NuA_jcuI8S5x';
-const TABLE_NAME       = 'family_members2';
-// ══════════════════════════════════════════════════════════
+const TABLE_NAME        = 'family_members2';
 
 async function fetchFromSupabase() {
   const url = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*`;
@@ -277,10 +345,7 @@ async function fetchFromSupabase() {
       'Content-Type':  'application/json',
     }
   });
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`Supabase error ${res.status}: ${body}`);
-  }
+  if (!res.ok) { const b = await res.text(); throw new Error(`Supabase error ${res.status}: ${b}`); }
   return res.json();
 }
 
@@ -308,13 +373,206 @@ function rowsToChartData(rows) {
   }));
 }
 
+// ════════════════════════════════════════════════════════
+//  RELATIONSHIP PATH FINDER
+// ════════════════════════════════════════════════════════
+
+/** BFS shortest path between two ids. Returns array of ids or null. */
+function findPath(dataMap, fromId, toId) {
+  if (fromId === toId) return [fromId];
+  const queue   = [[fromId]];
+  const visited = new Set([fromId]);
+  while (queue.length) {
+    const path = queue.shift();
+    const cur  = path[path.length - 1];
+    const node = dataMap.get(cur);
+    if (!node) continue;
+    const neighbors = [];
+    if (node.rels.father)  neighbors.push(node.rels.father);
+    if (node.rels.mother)  neighbors.push(node.rels.mother);
+    node.rels.children.forEach(c => neighbors.push(c));
+    node.rels.spouses.forEach(s  => neighbors.push(s));
+    for (const nb of neighbors) {
+      if (visited.has(nb)) continue;
+      const newPath = [...path, nb];
+      if (nb === toId) return newPath;
+      visited.add(nb);
+      queue.push(newPath);
+    }
+  }
+  return null;
+}
+
+/** Convert path of ids → array of step objects {move, label, gender} */
+function pathToSteps(dataMap, path) {
+  const steps = [];
+  for (let i = 0; i < path.length - 1; i++) {
+    const cur  = dataMap.get(path[i]);
+    const next = dataMap.get(path[i + 1]);
+    if (!cur || !next) continue;
+    const gNext = next.data.gender?.toLowerCase();
+    if (cur.rels.father === next.id || cur.rels.mother === next.id) {
+      steps.push({ move: 'up',     label: gNext === 'f' ? 'ibu' : 'ayah',            gender: gNext });
+    } else if (cur.rels.children.includes(next.id)) {
+      steps.push({ move: 'down',   label: gNext === 'f' ? 'anak perempuan' : 'anak laki-laki', gender: gNext });
+    } else if (cur.rels.spouses.includes(next.id)) {
+      steps.push({ move: 'spouse', label: gNext === 'f' ? 'istri' : 'suami',         gender: gNext });
+    }
+  }
+  return steps;
+}
+
+/** Birth year helper — returns 0 if unknown */
+function birthYear(person) {
+  const raw = person?.data?.birthday ?? '';
+  // birthday stored as 'YYYY' or 'YYYY-MM-DD'
+  const m = raw.match(/(\d{4})/);
+  return m ? parseInt(m[1]) : 0;
+}
+
+/**
+ * Derive Javanese kinship term that A uses to call B.
+ * Returns { term, desc } or null (fallback to raw path).
+ */
+function deriveJavaneseRelation(steps, personA, personB, dataMap, path) {
+  if (steps.length === 0) return { term: null, isSame: true };
+
+  const gB      = personB.data.gender?.toLowerCase();
+  const isMale  = gB === 'm';
+  const ups     = steps.filter(s => s.move === 'up').length;
+  const downs   = steps.filter(s => s.move === 'down').length;
+  const spouses = steps.filter(s => s.move === 'spouse').length;
+
+  // ── Direct spouse ──────────────────────────────────────
+  if (steps.length === 1 && spouses === 1) {
+    return { term: isMale ? 'Suami' : 'Istri', desc: 'pasangan hidup' };
+  }
+
+  // ── Pure blood lineal ──────────────────────────────────
+  if (spouses === 0 && ups > 0 && downs === 0) {
+    // B is ancestor of A
+    const terms = [null, [isMale?'Bapak':'Ibu','orang tua'], [isMale?'Mbah Kakung':'Mbah Putri','kakek/nenek'],
+      ['Mbah Buyut','buyut'], ['Mbah Canggah','canggah'], ['Mbah Wareng','wareng'],
+      ['Mbah Udheg-udheg','udheg-udheg'], ['Mbah Gantung Siwur','gantung siwur']];
+    if (ups < terms.length) return { term: terms[ups][0], desc: terms[ups][1] };
+    return { term: `Leluhur ke-${ups}`, desc: null };
+  }
+
+  if (spouses === 0 && downs > 0 && ups === 0) {
+    // B is descendant of A
+    const terms = [null, [isMale?'Anak Laki-laki':'Anak Perempuan','anak'],
+      [isMale?'Cucu Laki-laki':'Cucu Perempuan','cucu'],
+      ['Buyut','cicit'], ['Canggah','canggah'], ['Wareng','wareng']];
+    if (downs < terms.length) return { term: terms[downs][0], desc: terms[downs][1] };
+    return { term: `Keturunan ke-${downs}`, desc: null };
+  }
+
+  // ── Collateral (blood only) ────────────────────────────
+  if (spouses === 0) {
+    // sibling
+    if (ups === 1 && downs === 1) {
+      const aY = birthYear(personA), bY = birthYear(personB);
+      const bOlder = bY !== 0 && aY !== 0 ? bY < aY : true;
+      if (bOlder) return { term: isMale ? 'Mas' : 'Mbak', desc: 'kakak kandung' };
+      else        return { term: 'Adik', desc: 'adik kandung' };
+    }
+
+    // parent's sibling → pakde/bude/paklik/bulik
+    if (ups === 2 && downs === 1) {
+      // find A's parent (node at path[1])
+      const parentNode = dataMap.get(path[1]);
+      const pY = birthYear(parentNode);
+      const bY = birthYear(personB);
+      const bOlderThanParent = (bY !== 0 && pY !== 0) ? bY < pY : false;
+      if (bOlderThanParent) return { term: isMale ? 'Pakde'  : 'Bude',  desc: isMale ? 'kakak laki-laki orang tua' : 'kakak perempuan orang tua' };
+      else                  return { term: isMale ? 'Paklik' : 'Bulik', desc: isMale ? 'adik laki-laki orang tua'  : 'adik perempuan orang tua'  };
+    }
+
+    // niece/nephew
+    if (ups === 1 && downs === 2) {
+      return { term: 'Keponakan', desc: isMale ? 'anak laki-laki saudara' : 'anak perempuan saudara' };
+    }
+
+    // first cousin (misan)
+    if (ups === 2 && downs === 2) {
+      const aY = birthYear(personA), bY = birthYear(personB);
+      const bOlder = bY !== 0 && aY !== 0 ? bY < aY : false;
+      if (bOlder) return { term: isMale ? 'Mas Misan' : 'Mbak Misan', desc: 'sepupu satu (misan), lebih tua' };
+      else        return { term: 'Adik Misan',                          desc: 'sepupu satu (misan), lebih muda' };
+    }
+
+    // grandparent's sibling
+    if (ups === 3 && downs === 1) {
+      return { term: isMale ? 'Eyang Pakde' : 'Eyang Bude', desc: 'saudara kakek/nenek' };
+    }
+
+    // grandnephew/grandniece
+    if (ups === 1 && downs === 3) {
+      return { term: 'Keponakan Cucu', desc: 'cucu saudara kandung' };
+    }
+
+    // parent's first cousin
+    if (ups === 3 && downs === 2) {
+      return { term: isMale ? 'Pakde Misan' : 'Bude Misan', desc: 'anak saudara kakek/nenek' };
+    }
+
+    // sibling's grandchild
+    if (ups === 2 && downs === 3) {
+      return { term: 'Keponakan Misan', desc: 'cucu saudara orang tua' };
+    }
+
+    // second cousin (mindoan)
+    if (ups === 3 && downs === 3) {
+      const aY = birthYear(personA), bY = birthYear(personB);
+      const bOlder = bY !== 0 && aY !== 0 ? bY < aY : false;
+      if (bOlder) return { term: isMale ? 'Mas Mindoan' : 'Mbak Mindoan', desc: 'sepupu dua (mindoan), lebih tua' };
+      else        return { term: 'Adik Mindoan',                            desc: 'sepupu dua (mindoan), lebih muda' };
+    }
+
+    if (ups === 4 && downs === 4) {
+      return { term: isMale ? 'Mas Mindoan' : 'Mbak Mindoan', desc: 'sepupu tiga' };
+    }
+  }
+
+  // ── Affinal (in-law) ───────────────────────────────────
+  if (spouses === 1) {
+    // parent-in-law: up then spouse OR spouse then up
+    if ((ups === 1 && downs === 0) || (downs === 0 && ups === 1)) {
+      return { term: isMale ? 'Bapak Mertua' : 'Ibu Mertua', desc: 'orang tua pasangan' };
+    }
+    // child-in-law
+    if (ups === 0 && downs === 1) {
+      return { term: isMale ? 'Menantu Laki-laki' : 'Menantu Perempuan', desc: 'menantu' };
+    }
+    // sibling-in-law (ipar)
+    if (ups === 1 && downs === 1) {
+      return { term: isMale ? 'Ipar Laki-laki' : 'Ipar Perempuan', desc: 'ipar' };
+    }
+    // spouse of pakde/bude
+    if (ups === 2 && downs === 1) {
+      return { term: isMale ? 'Pakde' : 'Bude', desc: 'pasangan pakde/bude' };
+    }
+    // spouse of paklik/bulik
+    if (ups === 2 && downs === 1) {
+      return { term: isMale ? 'Paklik' : 'Bulik', desc: 'pasangan paklik/bulik' };
+    }
+  }
+
+  return null; // no named term → fallback to raw path
+}
+
+/** Build Indonesian raw path label */
+function stepsToRawPath(steps) {
+  return steps.map(s => s.label).join(' → ');
+}
+
 // ════════════════════════════════════════
 //  Search feature
 // ════════════════════════════════════════
-let chartInstance  = null;
-let chartData      = [];
-let activeIndex    = -1;
-let toastTimer     = null;
+let chartInstance = null;
+let chartData     = [];
+let activeIndex   = -1;
+let toastTimer    = null;
 
 const searchInput   = document.getElementById('search-input');
 const searchResults = document.getElementById('search-results');
@@ -323,155 +581,166 @@ const searchToast   = document.getElementById('search-toast');
 
 function highlight(text, query) {
   if (!query) return text;
-  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return text.replace(new RegExp(`(${escaped})`, 'gi'), '<em>$1</em>');
+  const esc = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return text.replace(new RegExp(`(${esc})`, 'gi'), '<em>$1</em>');
 }
-
 function showToast(msg) {
   clearTimeout(toastTimer);
   searchToast.textContent = msg;
   searchToast.classList.add('show');
   toastTimer = setTimeout(() => searchToast.classList.remove('show'), 2800);
 }
-
-function getFullName(d) {
-  return `${d.data['first name'] ?? ''} ${d.data['last name'] ?? ''}`.trim();
-}
+function getFullName(d) { return `${d.data['first name'] ?? ''} ${d.data['last name'] ?? ''}`.trim(); }
 
 function renderResults(query) {
   const q = query.trim().toLowerCase();
-  searchResults.innerHTML = '';
-  activeIndex = -1;
-
-  if (!q) {
-    searchResults.classList.remove('open');
-    return;
-  }
-
+  searchResults.innerHTML = ''; activeIndex = -1;
+  if (!q) { searchResults.classList.remove('open'); return; }
   const matches = chartData.filter(d => {
-    const name = getFullName(d).toLowerCase();
-    const bday = (d.data.birthday ?? '').toLowerCase();
-    return name.includes(q) || bday.includes(q);
+    return getFullName(d).toLowerCase().includes(q) || (d.data.birthday ?? '').toLowerCase().includes(q);
   }).slice(0, 8);
-
   if (!matches.length) {
     searchResults.innerHTML = `<div class="search-no-results">No members found for "${query}"</div>`;
-    searchResults.classList.add('open');
-    return;
+    searchResults.classList.add('open'); return;
   }
-
-  matches.forEach((d, i) => {
-    const fullName   = getFullName(d);
-    const hiName     = highlight(fullName, query.trim());
-    const bday       = d.data.birthday ? `b. ${d.data.birthday}` : '';
-    const avatar     = d.data.avatar;
-    const initials   = (d.data['first name']?.[0] ?? '') + (d.data['last name']?.[0] ?? '');
-
+  matches.forEach(d => {
+    const fullName = getFullName(d), hiName = highlight(fullName, query.trim());
+    const bday = d.data.birthday ? `b. ${d.data.birthday}` : '';
+    const avatar = d.data.avatar;
+    const initials = (d.data['first name']?.[0] ?? '') + (d.data['last name']?.[0] ?? '');
     const item = document.createElement('div');
-    item.className = 'search-result-item';
-    item.dataset.id = d.id;
+    item.className = 'search-result-item'; item.dataset.id = d.id;
     item.innerHTML = `
-      <div class="result-avatar">
-        ${avatar
-          ? `<img src="${avatar}" alt="${fullName}" onerror="this.parentNode.innerHTML='${initials}'">`
-          : initials || '?'}
-      </div>
+      <div class="result-avatar">${avatar ? `<img src="${avatar}" alt="${fullName}" onerror="this.parentNode.innerHTML='${initials}'">` : initials || '?'}</div>
       <div>
         <div class="result-name">${hiName}</div>
         ${bday ? `<div class="result-sub">${bday}</div>` : ''}
-      </div>
-    `;
-    item.addEventListener('mousedown', (e) => {
-      e.preventDefault(); // keep input focused
-      selectMember(d);
-    });
+      </div>`;
+    item.addEventListener('mousedown', e => { e.preventDefault(); selectMember(d); });
     searchResults.appendChild(item);
   });
-
   searchResults.classList.add('open');
 }
-
-function setActiveItem(index) {
+function setActiveItem(idx) {
   const items = searchResults.querySelectorAll('.search-result-item');
-  items.forEach((el, i) => el.classList.toggle('active', i === index));
-  activeIndex = index;
-  if (items[index]) items[index].scrollIntoView({ block: 'nearest' });
+  items.forEach((el, i) => el.classList.toggle('active', i === idx));
+  activeIndex = idx;
+  if (items[idx]) items[idx].scrollIntoView({ block: 'nearest' });
 }
-
 function selectMember(d) {
-  closeResults();
-  searchInput.value = getFullName(d);
-  searchClear.classList.add('visible');
-
+  searchResults.classList.remove('open'); activeIndex = -1;
+  searchInput.value = getFullName(d); searchClear.classList.add('visible');
   if (!chartInstance) return;
-  try {
-    chartInstance.updateMainId(d.id);
-    chartInstance.updateTree({ initial: false });
-    showToast(`Navigated to ${getFullName(d)}`);
-  } catch (err) {
-    console.warn('Could not navigate to member:', err);
-    showToast(`Found: ${getFullName(d)}`);
-  }
+  try { chartInstance.updateMainId(d.id); chartInstance.updateTree({ initial: false }); showToast(`Navigated to ${getFullName(d)}`); }
+  catch (e) { showToast(`Found: ${getFullName(d)}`); }
 }
+function closeResults() { searchResults.classList.remove('open'); activeIndex = -1; }
 
-function closeResults() {
-  searchResults.classList.remove('open');
-  activeIndex = -1;
-}
-
-// Input events
-searchInput.addEventListener('input', (e) => {
-  const val = e.target.value;
-  searchClear.classList.toggle('visible', val.length > 0);
-  renderResults(val);
+searchInput.addEventListener('input', e => {
+  searchClear.classList.toggle('visible', e.target.value.length > 0); renderResults(e.target.value);
 });
-
-searchInput.addEventListener('keydown', (e) => {
+searchInput.addEventListener('keydown', e => {
   const items = searchResults.querySelectorAll('.search-result-item');
-  if (e.key === 'ArrowDown') {
+  if (e.key === 'ArrowDown') { e.preventDefault(); setActiveItem(Math.min(activeIndex + 1, items.length - 1)); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); setActiveItem(Math.max(activeIndex - 1, 0)); }
+  else if (e.key === 'Enter') {
     e.preventDefault();
-    setActiveItem(Math.min(activeIndex + 1, items.length - 1));
-  } else if (e.key === 'ArrowUp') {
-    e.preventDefault();
-    setActiveItem(Math.max(activeIndex - 1, 0));
-  } else if (e.key === 'Enter') {
-    e.preventDefault();
-    if (activeIndex >= 0 && items[activeIndex]) {
-      const id = items[activeIndex].dataset.id;
-      const d  = chartData.find(x => x.id === id);
-      if (d) selectMember(d);
-    }
-  } else if (e.key === 'Escape') {
-    closeResults();
-    searchInput.blur();
+    if (activeIndex >= 0 && items[activeIndex]) { const d = chartData.find(x => x.id === items[activeIndex].dataset.id); if (d) selectMember(d); }
+  } else if (e.key === 'Escape') { closeResults(); searchInput.blur(); }
+});
+searchInput.addEventListener('focus', () => { if (searchInput.value.trim()) renderResults(searchInput.value); });
+searchClear.addEventListener('click', () => { searchInput.value = ''; searchClear.classList.remove('visible'); closeResults(); searchInput.focus(); });
+document.addEventListener('mousedown', e => { if (!document.getElementById('search-container').contains(e.target)) closeResults(); });
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey && e.key === 'k') || (e.key === '/' && document.activeElement !== searchInput)) { e.preventDefault(); searchInput.focus(); searchInput.select(); }
+});
+
+// ════════════════════════════════════════
+//  Relationship Finder UI
+// ════════════════════════════════════════
+const relToggleBtn  = document.getElementById('rel-toggle-btn');
+const relPanel      = document.getElementById('rel-panel');
+const relPanelClose = document.getElementById('rel-panel-close');
+const relSelectA    = document.getElementById('rel-select-a');
+const relSelectB    = document.getElementById('rel-select-b');
+const relSwapBtn    = document.getElementById('rel-swap-btn');
+const relFindBtn    = document.getElementById('rel-find-btn');
+const relResult     = document.getElementById('rel-result');
+
+relToggleBtn.addEventListener('click', () => {
+  const open = relPanel.classList.toggle('open');
+  relToggleBtn.classList.toggle('active', open);
+});
+relPanelClose.addEventListener('click', () => {
+  relPanel.classList.remove('open'); relToggleBtn.classList.remove('active');
+});
+relSwapBtn.addEventListener('click', () => {
+  const a = relSelectA.value, b = relSelectB.value;
+  relSelectA.value = b; relSelectB.value = a;
+  relResult.classList.remove('show'); relResult.innerHTML = '';
+});
+
+function populateDropdowns(data) {
+  const sorted = [...data].sort((a, b) => getFullName(a).localeCompare(getFullName(b)));
+  const opts = sorted.map(d => {
+    const name = getFullName(d);
+    const bday = d.data.birthday ? ` (${d.data.birthday})` : '';
+    return `<option value="${d.id}">${name}${bday}</option>`;
+  }).join('');
+  relSelectA.innerHTML = '<option value="">Pilih anggota keluarga…</option>' + opts;
+  relSelectB.innerHTML = '<option value="">Pilih anggota keluarga…</option>' + opts;
+}
+
+relFindBtn.addEventListener('click', () => {
+  const idA = relSelectA.value, idB = relSelectB.value;
+  relResult.classList.remove('show'); relResult.innerHTML = '';
+
+  if (!idA || !idB) {
+    relResult.innerHTML = `<div class="rel-result-error">Pilih dua anggota keluarga terlebih dahulu.</div>`;
+    relResult.classList.add('show'); return;
   }
-});
-
-searchInput.addEventListener('focus', () => {
-  if (searchInput.value.trim()) renderResults(searchInput.value);
-});
-
-searchClear.addEventListener('click', () => {
-  searchInput.value = '';
-  searchClear.classList.remove('visible');
-  closeResults();
-  searchInput.focus();
-});
-
-// Close dropdown when clicking outside
-document.addEventListener('mousedown', (e) => {
-  if (!document.getElementById('search-container').contains(e.target)) {
-    closeResults();
+  if (idA === idB) {
+    relResult.innerHTML = `<div class="rel-result-same">A dan B adalah orang yang sama.</div>`;
+    relResult.classList.add('show'); return;
   }
-});
 
-// Keyboard shortcut: / or Ctrl+K to focus search
-document.addEventListener('keydown', (e) => {
-  if ((e.ctrlKey && e.key === 'k') || (e.key === '/' && document.activeElement !== searchInput)) {
-    e.preventDefault();
-    searchInput.focus();
-    searchInput.select();
+  const dataMap = new Map(chartData.map(d => [d.id, d]));
+  const personA = dataMap.get(idA), personB = dataMap.get(idB);
+  const nameA   = getFullName(personA), nameB = getFullName(personB);
+  const path    = findPath(dataMap, idA, idB);
+
+  if (!path) {
+    relResult.innerHTML = `<div class="rel-result-error">Tidak ditemukan hubungan antara <strong>${nameA}</strong> dan <strong>${nameB}</strong>.</div>`;
+    relResult.classList.add('show'); return;
   }
+
+  const steps    = pathToSteps(dataMap, path);
+  const relation = deriveJavaneseRelation(steps, personA, personB, dataMap, path);
+  const rawPath  = stepsToRawPath(steps);
+
+  let html = '';
+  if (relation?.isSame) {
+    html = `<div class="rel-result-same">A dan B adalah orang yang sama.</div>`;
+  } else if (relation?.term) {
+    html = `
+      <div class="rel-result-sentence">
+        <strong>${nameA}</strong> harus memanggil <strong>${relation.term}</strong> ke <strong>${nameB}</strong>.
+      </div>
+      ${relation.desc ? `<div class="rel-result-desc">↳ ${relation.desc}</div>` : ''}
+      <div class="rel-result-path">${rawPath}</div>
+    `;
+  } else {
+    // No named Javanese term — show raw path only
+    html = `
+      <div class="rel-result-sentence">
+        <strong>${nameA}</strong> dan <strong>${nameB}</strong> masih berhubungan keluarga, tetapi tidak ada istilah panggilan Jawa yang spesifik.
+      </div>
+      <div class="rel-result-path">${rawPath}</div>
+    `;
+  }
+
+  relResult.innerHTML = html;
+  relResult.classList.add('show');
 });
 
 // ════════════════════════════════════════
@@ -479,10 +748,12 @@ document.addEventListener('keydown', (e) => {
 // ════════════════════════════════════════
 function create(data) {
   chartData = data;
-
-  document.getElementById('loading-overlay').style.display = 'none';
-  document.getElementById('FamilyChart').style.display     = 'block';
+  document.getElementById('loading-overlay').style.display  = 'none';
+  document.getElementById('FamilyChart').style.display      = 'block';
   document.getElementById('search-container').style.display = 'block';
+  relToggleBtn.style.display = 'flex';
+
+  populateDropdowns(data);
 
   const f3Chart = f3.createChart('#FamilyChart', data)
     .setTransitionTime(1000)
@@ -523,22 +794,18 @@ function showError(msg) {
     <pre style="white-space:pre-wrap;word-break:break-word;">${msg}</pre>
     <br>
     <strong>Checklist:</strong><br>
-    1. Did you replace <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> in this file?<br>
-    2. Is the table named <code>${TABLE_NAME}</code> and set to <strong>public read</strong> in Supabase RLS?<br>
-    3. Open the browser console (F12) for more details.
+    1. Replace <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code>.<br>
+    2. Table <code>${TABLE_NAME}</code> must be public read in Supabase RLS.<br>
+    3. Open browser console (F12) for more details.
   `;
 }
 
 fetchFromSupabase()
   .then(rows => {
     if (!rows.length) throw new Error('Table is empty — import your CSV first.');
-    const chartData = rowsToChartData(rows);
-    create(chartData);
+    create(rowsToChartData(rows));
   })
-  .catch(err => {
-    console.error(err);
-    showError(err.message);
-  });
+  .catch(err => { console.error(err); showError(err.message); });
 
 </script>
 </body>
