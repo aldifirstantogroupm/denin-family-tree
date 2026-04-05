@@ -13,35 +13,26 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'DM Mono', monospace; background: rgb(33,33,33); color: #fff; overflow: hidden; }
 
-    /* ── Loading overlay ── */
     #loading-overlay {
       position: fixed; inset: 0; background: rgb(33,33,33);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      z-index: 9999; gap: 16px;
-      color: #fff; font-size: 13px; letter-spacing: 0.12em;
-      font-family: 'DM Mono', monospace;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 9999; gap: 16px; color: #fff; font-size: 13px; letter-spacing: 0.12em;
     }
     .spinner {
       width: 38px; height: 38px;
-      border: 2px solid rgba(255,255,255,0.1);
-      border-top-color: rgba(255,255,255,0.7);
-      border-radius: 50%;
-      animation: spin 0.9s linear infinite;
+      border: 2px solid rgba(255,255,255,0.1); border-top-color: rgba(255,255,255,0.7);
+      border-radius: 50%; animation: spin 0.9s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     #error-box {
       display: none; color: #ff6b6b; padding: 40px;
-      font-family: 'DM Mono', monospace; font-size: 13px;
-      line-height: 1.8; background: rgb(33,33,33); min-height: 100vh;
+      font-family: 'DM Mono', monospace; font-size: 13px; line-height: 1.8;
+      background: rgb(33,33,33); min-height: 100vh;
     }
-
     #FamilyChart { width: 100%; height: 100vh; background-color: rgb(33,33,33); display: none; }
 
-    /* ══════════════════════════════════════
-       SEARCH BAR
-    ══════════════════════════════════════ */
+    /* ── Search ── */
     #search-container {
       position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
       z-index: 1000; width: min(480px, calc(100vw - 32px));
@@ -52,10 +43,9 @@
       pointer-events: none; color: rgba(255,255,255,0.35); display: flex; align-items: center;
     }
     #search-input {
-      width: 100%; background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.12); border-radius: 10px;
-      color: #fff; font-family: 'DM Mono', monospace; font-size: 13px;
-      letter-spacing: 0.04em; padding: 11px 40px 11px 40px; outline: none;
+      width: 100%; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px; color: #fff; font-family: 'DM Mono', monospace;
+      font-size: 13px; letter-spacing: 0.04em; padding: 11px 40px 11px 40px; outline: none;
       transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
       backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     }
@@ -66,9 +56,8 @@
     }
     #search-clear {
       position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-      background: none; border: none; cursor: pointer;
-      color: rgba(255,255,255,0.35); display: none;
-      align-items: center; justify-content: center; padding: 2px;
+      background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.35);
+      display: none; align-items: center; justify-content: center; padding: 2px;
       transition: color 0.15s; line-height: 0;
     }
     #search-clear:hover { color: rgba(255,255,255,0.75); }
@@ -76,22 +65,19 @@
     #search-results {
       position: absolute; top: calc(100% + 8px); left: 0; right: 0;
       background: rgb(42,42,42); border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 10px; overflow: hidden;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+      border-radius: 10px; overflow: hidden; box-shadow: 0 16px 48px rgba(0,0,0,0.6);
       display: none; max-height: 320px; overflow-y: auto;
     }
     #search-results.open { display: block; }
     .search-result-item {
-      display: flex; align-items: center; gap: 12px;
-      padding: 11px 16px; cursor: pointer; transition: background 0.12s;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex; align-items: center; gap: 12px; padding: 11px 16px;
+      cursor: pointer; transition: background 0.12s; border-bottom: 1px solid rgba(255,255,255,0.05);
     }
     .search-result-item:last-child { border-bottom: none; }
     .search-result-item:hover, .search-result-item.active { background: rgba(255,255,255,0.07); }
     .result-avatar {
-      width: 34px; height: 34px; border-radius: 50%;
-      background: rgba(255,255,255,0.1); flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.1);
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center;
       font-size: 14px; color: rgba(255,255,255,0.5); overflow: hidden;
     }
     .result-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -100,8 +86,7 @@
     .result-sub { font-size: 11px; color: rgba(255,255,255,0.38); margin-top: 1px; letter-spacing: 0.04em; }
     .search-no-results { padding: 18px 16px; font-size: 12px; color: rgba(255,255,255,0.3); text-align: center; letter-spacing: 0.08em; font-style: italic; }
     #search-toast {
-      position: fixed; bottom: 28px; left: 50%;
-      transform: translateX(-50%) translateY(80px);
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
       background: rgba(50,50,50,0.95); border: 1px solid rgba(255,255,255,0.12);
       border-radius: 8px; padding: 10px 20px; font-size: 12px; letter-spacing: 0.07em;
       color: rgba(255,255,255,0.75); backdrop-filter: blur(12px);
@@ -113,142 +98,79 @@
     #search-results::-webkit-scrollbar-track { background: transparent; }
     #search-results::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
 
-    /* ══════════════════════════════════════
-       RELATIONSHIP FINDER — toggle button
-    ══════════════════════════════════════ */
+    /* ── Relationship Finder toggle ── */
     #rel-toggle-btn {
       position: fixed; bottom: 28px; right: 28px; z-index: 1000;
-      width: 48px; height: 48px; border-radius: 50%;
-      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
-      color: rgba(255,255,255,0.75); cursor: pointer;
-      display: none; align-items: center; justify-content: center;
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      transition: background 0.2s, border-color 0.2s, transform 0.2s;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 12px; color: #fff; font-family: 'DM Mono', monospace;
+      font-size: 11px; letter-spacing: 0.1em; padding: 10px 16px;
+      cursor: pointer; display: none; align-items: center; gap: 8px;
+      backdrop-filter: blur(12px); transition: background 0.2s, border-color 0.2s, transform 0.15s;
+      text-transform: uppercase;
     }
-    #rel-toggle-btn:hover {
-      background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.28); transform: scale(1.06);
-    }
-    #rel-toggle-btn.active {
-      background: rgba(240,192,96,0.15); border-color: rgba(240,192,96,0.4); color: #f0c060;
-    }
+    #rel-toggle-btn:hover { background: rgba(255,255,255,0.13); border-color: rgba(255,255,255,0.25); transform: translateY(-1px); }
+    #rel-toggle-btn.active { background: rgba(240,192,96,0.15); border-color: rgba(240,192,96,0.4); color: #f0c060; }
 
-    /* ══════════════════════════════════════
-       RELATIONSHIP FINDER — floating panel
-    ══════════════════════════════════════ */
+    /* ── Relationship Finder panel ── */
     #rel-panel {
-      position: fixed; bottom: 88px; right: 28px; z-index: 999;
-      width: 340px; background: rgb(38,38,38);
-      border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
-      box-shadow: 0 24px 64px rgba(0,0,0,0.7);
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      display: none; flex-direction: column; overflow: hidden;
-      transform-origin: bottom right;
+      position: fixed; bottom: 80px; right: 28px; z-index: 999; width: 340px;
+      background: rgb(28,28,28); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px; padding: 20px; box-shadow: 0 24px 64px rgba(0,0,0,0.7);
+      display: none; flex-direction: column; gap: 16px;
+      transform: translateY(12px); opacity: 0;
+      transition: transform 0.3s cubic-bezier(.22,1,.36,1), opacity 0.25s;
     }
-    #rel-panel.open {
-      display: flex;
-      animation: panelOpen 0.25s cubic-bezier(.22,1,.36,1);
-    }
-    @keyframes panelOpen {
-      from { opacity: 0; transform: scale(0.88) translateY(12px); }
-      to   { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
-    .rel-panel-header {
-      padding: 16px 18px 12px; border-bottom: 1px solid rgba(255,255,255,0.07);
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .rel-panel-title {
-      font-size: 11px; letter-spacing: 0.14em;
-      color: rgba(255,255,255,0.45); text-transform: uppercase;
-    }
-    .rel-panel-close {
-      background: none; border: none; cursor: pointer;
-      color: rgba(255,255,255,0.3); line-height: 0; padding: 2px;
-      transition: color 0.15s;
-    }
-    .rel-panel-close:hover { color: rgba(255,255,255,0.7); }
-
-    .rel-panel-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
-
-    .rel-selector-row { display: flex; flex-direction: column; gap: 6px; }
-    .rel-selector-label { font-size: 10px; letter-spacing: 0.12em; color: rgba(255,255,255,0.3); text-transform: uppercase; }
+    #rel-panel.open { display: flex; transform: translateY(0); opacity: 1; }
+    .rel-panel-header { display: flex; align-items: center; justify-content: space-between; }
+    .rel-panel-title { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 300; letter-spacing: 0.04em; color: rgba(255,255,255,0.9); }
+    .rel-panel-hint { font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 0.08em; text-transform: uppercase; }
+    .rel-row { display: flex; flex-direction: column; gap: 6px; }
+    .rel-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.35); }
     .rel-select-wrap { position: relative; }
     .rel-select-wrap::after {
       content: ''; position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-      width: 0; height: 0; border-left: 4px solid transparent;
-      border-right: 4px solid transparent; border-top: 5px solid rgba(255,255,255,0.35);
-      pointer-events: none;
+      width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent;
+      border-top: 5px solid rgba(255,255,255,0.4); pointer-events: none;
     }
     .rel-select {
-      width: 100%; background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
-      color: #fff; font-family: 'DM Mono', monospace; font-size: 12px;
-      padding: 9px 32px 9px 12px; outline: none; cursor: pointer;
-      appearance: none; -webkit-appearance: none;
-      transition: border-color 0.15s, background 0.15s;
+      width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; color: #fff; font-family: 'DM Mono', monospace;
+      font-size: 12px; letter-spacing: 0.03em; padding: 9px 32px 9px 12px; outline: none;
+      cursor: pointer; appearance: none; -webkit-appearance: none;
+      transition: border-color 0.2s, background 0.2s;
     }
     .rel-select:focus { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.09); }
-    .rel-select option { background: rgb(42,42,42); color: #fff; }
-
+    .rel-select option { background: rgb(40,40,40); color: #fff; }
     .rel-swap-row { display: flex; justify-content: center; }
-    .rel-swap-btn {
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 6px; color: rgba(255,255,255,0.4); cursor: pointer;
-      padding: 5px 14px; font-size: 11px; font-family: 'DM Mono', monospace;
-      letter-spacing: 0.06em; transition: background 0.15s, color 0.15s;
-      display: flex; align-items: center; gap: 6px;
+    #rel-swap-btn {
+      background: none; border: 1px solid rgba(255,255,255,0.1); border-radius: 50%;
+      width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: rgba(255,255,255,0.4); transition: color 0.2s, border-color 0.2s, transform 0.3s;
     }
-    .rel-swap-btn:hover { background: rgba(255,255,255,0.09); color: rgba(255,255,255,0.7); }
-
-    .rel-find-btn {
-      width: 100%; background: rgba(240,192,96,0.12);
-      border: 1px solid rgba(240,192,96,0.3); border-radius: 8px;
-      color: #f0c060; font-family: 'DM Mono', monospace;
-      font-size: 12px; letter-spacing: 0.08em; padding: 10px;
-      cursor: pointer; transition: background 0.2s, border-color 0.2s;
+    #rel-swap-btn:hover { color: rgba(255,255,255,0.8); border-color: rgba(255,255,255,0.25); transform: rotate(180deg); }
+    #rel-find-btn {
+      width: 100%; background: rgba(240,192,96,0.12); border: 1px solid rgba(240,192,96,0.3);
+      border-radius: 8px; color: #f0c060; font-family: 'DM Mono', monospace;
+      font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; padding: 11px;
+      cursor: pointer; transition: background 0.2s, border-color 0.2s, transform 0.1s;
     }
-    .rel-find-btn:hover { background: rgba(240,192,96,0.2); border-color: rgba(240,192,96,0.5); }
-
-    /* result area */
-    .rel-result {
-      display: none; flex-direction: column; gap: 10px;
-      border-top: 1px solid rgba(255,255,255,0.07);
-      padding: 14px 18px 16px;
-    }
-    .rel-result.show {
-      display: flex;
-      animation: fadeSlideUp 0.3s cubic-bezier(.22,1,.36,1);
-    }
-    @keyframes fadeSlideUp {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .rel-result-sentence {
-      font-size: 13px; line-height: 1.75; color: rgba(255,255,255,0.85); letter-spacing: 0.02em;
-    }
+    #rel-find-btn:hover { background: rgba(240,192,96,0.2); border-color: rgba(240,192,96,0.5); }
+    #rel-find-btn:active { transform: scale(0.98); }
+    #rel-find-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    #rel-result { display: none; flex-direction: column; gap: 10px; border-top: 1px solid rgba(255,255,255,0.07); padding-top: 14px; }
+    #rel-result.visible { display: flex; }
+    .rel-result-sentence { font-size: 13px; line-height: 1.6; color: rgba(255,255,255,0.85); letter-spacing: 0.02em; }
     .rel-result-sentence strong { color: #f0c060; font-weight: 500; }
-    .rel-result-path {
-      font-size: 10px; color: rgba(255,255,255,0.25); letter-spacing: 0.05em;
-      line-height: 1.6; font-style: italic; padding-top: 2px;
-      border-top: 1px solid rgba(255,255,255,0.05);
-    }
-    .rel-result-same { font-size: 12px; color: rgba(255,255,255,0.45); text-align: center; letter-spacing: 0.05em; }
-    .rel-result-error { font-size: 12px; color: rgba(255,100,100,0.75); letter-spacing: 0.04em; }
-    .rel-result-desc { font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 0.04em; }
+    .rel-path-chain { font-size: 10px; color: rgba(255,255,255,0.28); letter-spacing: 0.05em; line-height: 1.7; border-left: 2px solid rgba(255,255,255,0.07); padding-left: 10px; }
+    .rel-not-found { font-size: 12px; color: rgba(255,255,255,0.35); font-style: italic; }
   </style>
 </head>
 <body>
 
-<div id="loading-overlay">
-  <div class="spinner"></div>
-  <span>Loading family data…</span>
-</div>
-
+<div id="loading-overlay"><div class="spinner"></div><span>Loading family data…</span></div>
 <div id="error-box"></div>
 
-<!-- Search bar -->
+<!-- Search -->
 <div id="search-container" style="display:none;">
   <div id="search-wrap">
     <span id="search-icon">
@@ -266,65 +188,51 @@
   </div>
   <div id="search-results"></div>
 </div>
-
 <div id="search-toast"></div>
 
 <!-- Chart -->
-<div id="FamilyChart" class="f3" style="width:100%;height:100vh;background-color:rgb(33,33,33);display:none;"></div>
+<div id="FamilyChart" class="f3" style="width:100%;height:100vh;background-color:rgb(33,33,33);color:#fff;display:none;"></div>
 
-<!-- Relationship finder toggle -->
-<button id="rel-toggle-btn" title="Cari hubungan keluarga">
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="9" cy="8" r="3"/>
-    <circle cx="17" cy="8" r="3"/>
-    <path d="M3 21v-1a6 6 0 0 1 6-6h1"/>
-    <path d="M16 19l2 2 4-4"/>
+<!-- Relationship Finder -->
+<button id="rel-toggle-btn" style="display:none;">
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+    <circle cx="3" cy="8" r="2" stroke="currentColor" stroke-width="1.4"/>
+    <circle cx="13" cy="3" r="2" stroke="currentColor" stroke-width="1.4"/>
+    <circle cx="13" cy="13" r="2" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M5 7.5L11 4M5 8.5L11 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
   </svg>
+  Cari Hubungan
 </button>
 
-<!-- Relationship finder panel -->
 <div id="rel-panel">
   <div class="rel-panel-header">
-    <span class="rel-panel-title">Hubungan Keluarga</span>
-    <button class="rel-panel-close" id="rel-panel-close">
-      <svg width="13" height="13" viewBox="0 0 12 12" fill="none">
-        <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <span class="rel-panel-title">Pencari Hubungan Keluarga</span>
+    <span class="rel-panel-hint">Javanese kin</span>
+  </div>
+  <div class="rel-row">
+    <span class="rel-label">A — siapa yang memanggil</span>
+    <div class="rel-select-wrap">
+      <select id="rel-select-a" class="rel-select"><option value="">Pilih anggota keluarga…</option></select>
+    </div>
+  </div>
+  <div class="rel-swap-row">
+    <button id="rel-swap-btn" title="Tukar A dan B">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+        <path d="M8 2v12M4 6L8 2l4 4M4 10l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
   </div>
-
-  <div class="rel-panel-body">
-    <div class="rel-selector-row">
-      <span class="rel-selector-label">A — yang memanggil</span>
-      <div class="rel-select-wrap">
-        <select class="rel-select" id="rel-select-a">
-          <option value="">Pilih anggota keluarga…</option>
-        </select>
-      </div>
+  <div class="rel-row">
+    <span class="rel-label">B — yang dipanggil</span>
+    <div class="rel-select-wrap">
+      <select id="rel-select-b" class="rel-select"><option value="">Pilih anggota keluarga…</option></select>
     </div>
-
-    <div class="rel-swap-row">
-      <button class="rel-swap-btn" id="rel-swap-btn">
-        <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-          <path d="M4 2v12M4 14l-3-3M4 14l3-3M12 14V2M12 2l-3 3M12 2l3 3"/>
-        </svg>
-        tukar A ↔ B
-      </button>
-    </div>
-
-    <div class="rel-selector-row">
-      <span class="rel-selector-label">B — yang dipanggil</span>
-      <div class="rel-select-wrap">
-        <select class="rel-select" id="rel-select-b">
-          <option value="">Pilih anggota keluarga…</option>
-        </select>
-      </div>
-    </div>
-
-    <button class="rel-find-btn" id="rel-find-btn">Cari Hubungan →</button>
   </div>
-
-  <div class="rel-result" id="rel-result"></div>
+  <button id="rel-find-btn" disabled>Cari Hubungan</button>
+  <div id="rel-result">
+    <div id="rel-result-sentence" class="rel-result-sentence"></div>
+    <div id="rel-path-chain" class="rel-path-chain"></div>
+  </div>
 </div>
 
 <script type="module">
@@ -337,15 +245,10 @@ const SUPABASE_ANON_KEY = 'sb_publishable_atkQZKMKVaDU_m9V3d_NuA_jcuI8S5x';
 const TABLE_NAME        = 'family_members2';
 
 async function fetchFromSupabase() {
-  const url = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*`;
-  const res = await fetch(url, {
-    headers: {
-      'apikey':        SUPABASE_ANON_KEY,
-      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-      'Content-Type':  'application/json',
-    }
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*`, {
+    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }
   });
-  if (!res.ok) { const b = await res.text(); throw new Error(`Supabase error ${res.status}: ${b}`); }
+  if (!res.ok) { const body = await res.text(); throw new Error(`Supabase error ${res.status}: ${body}`); }
   return res.json();
 }
 
@@ -357,222 +260,15 @@ function splitPipe(val) {
 function rowsToChartData(rows) {
   return rows.map(row => ({
     id: String(row.id),
-    data: {
-      'first name': row.first_name  ?? '',
-      'last name':  row.last_name   ?? '',
-      birthday:     row.birthday    ? String(row.birthday) : '',
-      gender:       row.gender      ?? '',
-      avatar:       row.avatar      ?? '',
-    },
-    rels: {
-      father:   splitPipe(row.parents)[0] ?? null,
-      mother:   splitPipe(row.parents)[1] ?? null,
-      spouses:  splitPipe(row.spouses),
-      children: splitPipe(row.children),
-    }
+    data: { 'first name': row.first_name ?? '', 'last name': row.last_name ?? '', birthday: row.birthday ? String(row.birthday) : '', gender: row.gender ?? '', avatar: row.avatar ?? '' },
+    rels: { father: splitPipe(row.parents)[0] ?? null, mother: splitPipe(row.parents)[1] ?? null, spouses: splitPipe(row.spouses), children: splitPipe(row.children) }
   }));
 }
 
-// ════════════════════════════════════════════════════════
-//  RELATIONSHIP PATH FINDER
-// ════════════════════════════════════════════════════════
-
-/** BFS shortest path between two ids. Returns array of ids or null. */
-function findPath(dataMap, fromId, toId) {
-  if (fromId === toId) return [fromId];
-  const queue   = [[fromId]];
-  const visited = new Set([fromId]);
-  while (queue.length) {
-    const path = queue.shift();
-    const cur  = path[path.length - 1];
-    const node = dataMap.get(cur);
-    if (!node) continue;
-    const neighbors = [];
-    if (node.rels.father)  neighbors.push(node.rels.father);
-    if (node.rels.mother)  neighbors.push(node.rels.mother);
-    node.rels.children.forEach(c => neighbors.push(c));
-    node.rels.spouses.forEach(s  => neighbors.push(s));
-    for (const nb of neighbors) {
-      if (visited.has(nb)) continue;
-      const newPath = [...path, nb];
-      if (nb === toId) return newPath;
-      visited.add(nb);
-      queue.push(newPath);
-    }
-  }
-  return null;
-}
-
-/** Convert path of ids → array of step objects {move, label, gender} */
-function pathToSteps(dataMap, path) {
-  const steps = [];
-  for (let i = 0; i < path.length - 1; i++) {
-    const cur  = dataMap.get(path[i]);
-    const next = dataMap.get(path[i + 1]);
-    if (!cur || !next) continue;
-    const gNext = next.data.gender?.toLowerCase();
-    if (cur.rels.father === next.id || cur.rels.mother === next.id) {
-      steps.push({ move: 'up',     label: gNext === 'f' ? 'ibu' : 'ayah',            gender: gNext });
-    } else if (cur.rels.children.includes(next.id)) {
-      steps.push({ move: 'down',   label: gNext === 'f' ? 'anak perempuan' : 'anak laki-laki', gender: gNext });
-    } else if (cur.rels.spouses.includes(next.id)) {
-      steps.push({ move: 'spouse', label: gNext === 'f' ? 'istri' : 'suami',         gender: gNext });
-    }
-  }
-  return steps;
-}
-
-/** Birth year helper — returns 0 if unknown */
-function birthYear(person) {
-  const raw = person?.data?.birthday ?? '';
-  // birthday stored as 'YYYY' or 'YYYY-MM-DD'
-  const m = raw.match(/(\d{4})/);
-  return m ? parseInt(m[1]) : 0;
-}
-
-/**
- * Derive Javanese kinship term that A uses to call B.
- * Returns { term, desc } or null (fallback to raw path).
- */
-function deriveJavaneseRelation(steps, personA, personB, dataMap, path) {
-  if (steps.length === 0) return { term: null, isSame: true };
-
-  const gB      = personB.data.gender?.toLowerCase();
-  const isMale  = gB === 'm';
-  const ups     = steps.filter(s => s.move === 'up').length;
-  const downs   = steps.filter(s => s.move === 'down').length;
-  const spouses = steps.filter(s => s.move === 'spouse').length;
-
-  // ── Direct spouse ──────────────────────────────────────
-  if (steps.length === 1 && spouses === 1) {
-    return { term: isMale ? 'Suami' : 'Istri', desc: 'pasangan hidup' };
-  }
-
-  // ── Pure blood lineal ──────────────────────────────────
-  if (spouses === 0 && ups > 0 && downs === 0) {
-    // B is ancestor of A
-    const terms = [null, [isMale?'Bapak':'Ibu','orang tua'], [isMale?'Mbah Kakung':'Mbah Putri','kakek/nenek'],
-      ['Mbah Buyut','buyut'], ['Mbah Canggah','canggah'], ['Mbah Wareng','wareng'],
-      ['Mbah Udheg-udheg','udheg-udheg'], ['Mbah Gantung Siwur','gantung siwur']];
-    if (ups < terms.length) return { term: terms[ups][0], desc: terms[ups][1] };
-    return { term: `Leluhur ke-${ups}`, desc: null };
-  }
-
-  if (spouses === 0 && downs > 0 && ups === 0) {
-    // B is descendant of A
-    const terms = [null, [isMale?'Anak Laki-laki':'Anak Perempuan','anak'],
-      [isMale?'Cucu Laki-laki':'Cucu Perempuan','cucu'],
-      ['Buyut','cicit'], ['Canggah','canggah'], ['Wareng','wareng']];
-    if (downs < terms.length) return { term: terms[downs][0], desc: terms[downs][1] };
-    return { term: `Keturunan ke-${downs}`, desc: null };
-  }
-
-  // ── Collateral (blood only) ────────────────────────────
-  if (spouses === 0) {
-    // sibling
-    if (ups === 1 && downs === 1) {
-      const aY = birthYear(personA), bY = birthYear(personB);
-      const bOlder = bY !== 0 && aY !== 0 ? bY < aY : true;
-      if (bOlder) return { term: isMale ? 'Mas' : 'Mbak', desc: 'kakak kandung' };
-      else        return { term: 'Adik', desc: 'adik kandung' };
-    }
-
-    // parent's sibling → pakde/bude/paklik/bulik
-    if (ups === 2 && downs === 1) {
-      // find A's parent (node at path[1])
-      const parentNode = dataMap.get(path[1]);
-      const pY = birthYear(parentNode);
-      const bY = birthYear(personB);
-      const bOlderThanParent = (bY !== 0 && pY !== 0) ? bY < pY : false;
-      if (bOlderThanParent) return { term: isMale ? 'Pakde'  : 'Bude',  desc: isMale ? 'kakak laki-laki orang tua' : 'kakak perempuan orang tua' };
-      else                  return { term: isMale ? 'Paklik' : 'Bulik', desc: isMale ? 'adik laki-laki orang tua'  : 'adik perempuan orang tua'  };
-    }
-
-    // niece/nephew
-    if (ups === 1 && downs === 2) {
-      return { term: 'Keponakan', desc: isMale ? 'anak laki-laki saudara' : 'anak perempuan saudara' };
-    }
-
-    // first cousin (misan)
-    if (ups === 2 && downs === 2) {
-      const aY = birthYear(personA), bY = birthYear(personB);
-      const bOlder = bY !== 0 && aY !== 0 ? bY < aY : false;
-      if (bOlder) return { term: isMale ? 'Mas Misan' : 'Mbak Misan', desc: 'sepupu satu (misan), lebih tua' };
-      else        return { term: 'Adik Misan',                          desc: 'sepupu satu (misan), lebih muda' };
-    }
-
-    // grandparent's sibling
-    if (ups === 3 && downs === 1) {
-      return { term: isMale ? 'Eyang Pakde' : 'Eyang Bude', desc: 'saudara kakek/nenek' };
-    }
-
-    // grandnephew/grandniece
-    if (ups === 1 && downs === 3) {
-      return { term: 'Keponakan Cucu', desc: 'cucu saudara kandung' };
-    }
-
-    // parent's first cousin
-    if (ups === 3 && downs === 2) {
-      return { term: isMale ? 'Pakde Misan' : 'Bude Misan', desc: 'anak saudara kakek/nenek' };
-    }
-
-    // sibling's grandchild
-    if (ups === 2 && downs === 3) {
-      return { term: 'Keponakan Misan', desc: 'cucu saudara orang tua' };
-    }
-
-    // second cousin (mindoan)
-    if (ups === 3 && downs === 3) {
-      const aY = birthYear(personA), bY = birthYear(personB);
-      const bOlder = bY !== 0 && aY !== 0 ? bY < aY : false;
-      if (bOlder) return { term: isMale ? 'Mas Mindoan' : 'Mbak Mindoan', desc: 'sepupu dua (mindoan), lebih tua' };
-      else        return { term: 'Adik Mindoan',                            desc: 'sepupu dua (mindoan), lebih muda' };
-    }
-
-    if (ups === 4 && downs === 4) {
-      return { term: isMale ? 'Mas Mindoan' : 'Mbak Mindoan', desc: 'sepupu tiga' };
-    }
-  }
-
-  // ── Affinal (in-law) ───────────────────────────────────
-  if (spouses === 1) {
-    // parent-in-law: up then spouse OR spouse then up
-    if ((ups === 1 && downs === 0) || (downs === 0 && ups === 1)) {
-      return { term: isMale ? 'Bapak Mertua' : 'Ibu Mertua', desc: 'orang tua pasangan' };
-    }
-    // child-in-law
-    if (ups === 0 && downs === 1) {
-      return { term: isMale ? 'Menantu Laki-laki' : 'Menantu Perempuan', desc: 'menantu' };
-    }
-    // sibling-in-law (ipar)
-    if (ups === 1 && downs === 1) {
-      return { term: isMale ? 'Ipar Laki-laki' : 'Ipar Perempuan', desc: 'ipar' };
-    }
-    // spouse of pakde/bude
-    if (ups === 2 && downs === 1) {
-      return { term: isMale ? 'Pakde' : 'Bude', desc: 'pasangan pakde/bude' };
-    }
-    // spouse of paklik/bulik
-    if (ups === 2 && downs === 1) {
-      return { term: isMale ? 'Paklik' : 'Bulik', desc: 'pasangan paklik/bulik' };
-    }
-  }
-
-  return null; // no named term → fallback to raw path
-}
-
-/** Build Indonesian raw path label */
-function stepsToRawPath(steps) {
-  return steps.map(s => s.label).join(' → ');
-}
-
 // ════════════════════════════════════════
-//  Search feature
+//  Search
 // ════════════════════════════════════════
-let chartInstance = null;
-let chartData     = [];
-let activeIndex   = -1;
-let toastTimer    = null;
+let chartInstance = null, chartData = [], activeIndex = -1, toastTimer = null;
 
 const searchInput   = document.getElementById('search-input');
 const searchResults = document.getElementById('search-results');
@@ -581,166 +277,334 @@ const searchToast   = document.getElementById('search-toast');
 
 function highlight(text, query) {
   if (!query) return text;
-  const esc = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return text.replace(new RegExp(`(${esc})`, 'gi'), '<em>$1</em>');
+  return text.replace(new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'), '<em>$1</em>');
 }
 function showToast(msg) {
-  clearTimeout(toastTimer);
-  searchToast.textContent = msg;
-  searchToast.classList.add('show');
+  clearTimeout(toastTimer); searchToast.textContent = msg; searchToast.classList.add('show');
   toastTimer = setTimeout(() => searchToast.classList.remove('show'), 2800);
 }
 function getFullName(d) { return `${d.data['first name'] ?? ''} ${d.data['last name'] ?? ''}`.trim(); }
 
 function renderResults(query) {
-  const q = query.trim().toLowerCase();
-  searchResults.innerHTML = ''; activeIndex = -1;
+  const q = query.trim().toLowerCase(); searchResults.innerHTML = ''; activeIndex = -1;
   if (!q) { searchResults.classList.remove('open'); return; }
-  const matches = chartData.filter(d => {
-    return getFullName(d).toLowerCase().includes(q) || (d.data.birthday ?? '').toLowerCase().includes(q);
-  }).slice(0, 8);
-  if (!matches.length) {
-    searchResults.innerHTML = `<div class="search-no-results">No members found for "${query}"</div>`;
-    searchResults.classList.add('open'); return;
-  }
+  const matches = chartData.filter(d => getFullName(d).toLowerCase().includes(q) || (d.data.birthday ?? '').toLowerCase().includes(q)).slice(0, 8);
+  if (!matches.length) { searchResults.innerHTML = `<div class="search-no-results">No members found for "${query}"</div>`; searchResults.classList.add('open'); return; }
   matches.forEach(d => {
-    const fullName = getFullName(d), hiName = highlight(fullName, query.trim());
-    const bday = d.data.birthday ? `b. ${d.data.birthday}` : '';
-    const avatar = d.data.avatar;
-    const initials = (d.data['first name']?.[0] ?? '') + (d.data['last name']?.[0] ?? '');
+    const fullName = getFullName(d), initials = (d.data['first name']?.[0] ?? '') + (d.data['last name']?.[0] ?? '');
     const item = document.createElement('div');
     item.className = 'search-result-item'; item.dataset.id = d.id;
-    item.innerHTML = `
-      <div class="result-avatar">${avatar ? `<img src="${avatar}" alt="${fullName}" onerror="this.parentNode.innerHTML='${initials}'">` : initials || '?'}</div>
-      <div>
-        <div class="result-name">${hiName}</div>
-        ${bday ? `<div class="result-sub">${bday}</div>` : ''}
-      </div>`;
+    item.innerHTML = `<div class="result-avatar">${d.data.avatar ? `<img src="${d.data.avatar}" alt="${fullName}" onerror="this.parentNode.innerHTML='${initials}'">` : initials || '?'}</div><div><div class="result-name">${highlight(fullName, query.trim())}</div>${d.data.birthday ? `<div class="result-sub">b. ${d.data.birthday}</div>` : ''}</div>`;
     item.addEventListener('mousedown', e => { e.preventDefault(); selectMember(d); });
     searchResults.appendChild(item);
   });
   searchResults.classList.add('open');
 }
-function setActiveItem(idx) {
-  const items = searchResults.querySelectorAll('.search-result-item');
-  items.forEach((el, i) => el.classList.toggle('active', i === idx));
-  activeIndex = idx;
-  if (items[idx]) items[idx].scrollIntoView({ block: 'nearest' });
-}
+function setActiveItem(i) { const items = searchResults.querySelectorAll('.search-result-item'); items.forEach((el, j) => el.classList.toggle('active', j === i)); activeIndex = i; if (items[i]) items[i].scrollIntoView({ block: 'nearest' }); }
 function selectMember(d) {
-  searchResults.classList.remove('open'); activeIndex = -1;
-  searchInput.value = getFullName(d); searchClear.classList.add('visible');
+  closeResults(); searchInput.value = getFullName(d); searchClear.classList.add('visible');
   if (!chartInstance) return;
   try { chartInstance.updateMainId(d.id); chartInstance.updateTree({ initial: false }); showToast(`Navigated to ${getFullName(d)}`); }
-  catch (e) { showToast(`Found: ${getFullName(d)}`); }
+  catch { showToast(`Found: ${getFullName(d)}`); }
 }
 function closeResults() { searchResults.classList.remove('open'); activeIndex = -1; }
 
-searchInput.addEventListener('input', e => {
-  searchClear.classList.toggle('visible', e.target.value.length > 0); renderResults(e.target.value);
-});
+searchInput.addEventListener('input', e => { const v = e.target.value; searchClear.classList.toggle('visible', v.length > 0); renderResults(v); });
 searchInput.addEventListener('keydown', e => {
   const items = searchResults.querySelectorAll('.search-result-item');
   if (e.key === 'ArrowDown') { e.preventDefault(); setActiveItem(Math.min(activeIndex + 1, items.length - 1)); }
   else if (e.key === 'ArrowUp') { e.preventDefault(); setActiveItem(Math.max(activeIndex - 1, 0)); }
-  else if (e.key === 'Enter') {
-    e.preventDefault();
-    if (activeIndex >= 0 && items[activeIndex]) { const d = chartData.find(x => x.id === items[activeIndex].dataset.id); if (d) selectMember(d); }
-  } else if (e.key === 'Escape') { closeResults(); searchInput.blur(); }
+  else if (e.key === 'Enter') { e.preventDefault(); if (activeIndex >= 0 && items[activeIndex]) { const d = chartData.find(x => x.id === items[activeIndex].dataset.id); if (d) selectMember(d); } }
+  else if (e.key === 'Escape') { closeResults(); searchInput.blur(); }
 });
 searchInput.addEventListener('focus', () => { if (searchInput.value.trim()) renderResults(searchInput.value); });
 searchClear.addEventListener('click', () => { searchInput.value = ''; searchClear.classList.remove('visible'); closeResults(); searchInput.focus(); });
 document.addEventListener('mousedown', e => { if (!document.getElementById('search-container').contains(e.target)) closeResults(); });
-document.addEventListener('keydown', e => {
-  if ((e.ctrlKey && e.key === 'k') || (e.key === '/' && document.activeElement !== searchInput)) { e.preventDefault(); searchInput.focus(); searchInput.select(); }
-});
+document.addEventListener('keydown', e => { if ((e.ctrlKey && e.key === 'k') || (e.key === '/' && document.activeElement !== searchInput)) { e.preventDefault(); searchInput.focus(); searchInput.select(); } });
 
 // ════════════════════════════════════════
-//  Relationship Finder UI
+//  RELATIONSHIP PATH FINDER
 // ════════════════════════════════════════
-const relToggleBtn  = document.getElementById('rel-toggle-btn');
-const relPanel      = document.getElementById('rel-panel');
-const relPanelClose = document.getElementById('rel-panel-close');
-const relSelectA    = document.getElementById('rel-select-a');
-const relSelectB    = document.getElementById('rel-select-b');
-const relSwapBtn    = document.getElementById('rel-swap-btn');
-const relFindBtn    = document.getElementById('rel-find-btn');
-const relResult     = document.getElementById('rel-result');
+
+const relToggleBtn = document.getElementById('rel-toggle-btn');
+const relPanel     = document.getElementById('rel-panel');
+const relSelectA   = document.getElementById('rel-select-a');
+const relSelectB   = document.getElementById('rel-select-b');
+const relSwapBtn   = document.getElementById('rel-swap-btn');
+const relFindBtn   = document.getElementById('rel-find-btn');
+const relResult    = document.getElementById('rel-result');
+const relSentence  = document.getElementById('rel-result-sentence');
+const relPathChain = document.getElementById('rel-path-chain');
 
 relToggleBtn.addEventListener('click', () => {
-  const open = relPanel.classList.toggle('open');
-  relToggleBtn.classList.toggle('active', open);
+  const open = relPanel.classList.contains('open');
+  if (open) {
+    relPanel.style.opacity = '0'; relPanel.style.transform = 'translateY(12px)';
+    setTimeout(() => { relPanel.classList.remove('open'); relPanel.style.opacity = ''; relPanel.style.transform = ''; }, 280);
+    relToggleBtn.classList.remove('active');
+  } else { relPanel.classList.add('open'); relToggleBtn.classList.add('active'); }
 });
-relPanelClose.addEventListener('click', () => {
-  relPanel.classList.remove('open'); relToggleBtn.classList.remove('active');
+document.addEventListener('mousedown', e => {
+  if (!relPanel.contains(e.target) && !relToggleBtn.contains(e.target) && relPanel.classList.contains('open')) {
+    relPanel.style.opacity = '0'; relPanel.style.transform = 'translateY(12px)';
+    setTimeout(() => { relPanel.classList.remove('open'); relPanel.style.opacity = ''; relPanel.style.transform = ''; }, 280);
+    relToggleBtn.classList.remove('active');
+  }
 });
-relSwapBtn.addEventListener('click', () => {
-  const a = relSelectA.value, b = relSelectB.value;
-  relSelectA.value = b; relSelectB.value = a;
-  relResult.classList.remove('show'); relResult.innerHTML = '';
-});
+relSwapBtn.addEventListener('click', () => { const t = relSelectA.value; relSelectA.value = relSelectB.value; relSelectB.value = t; updateFindBtn(); relResult.classList.remove('visible'); });
+function updateFindBtn() { const a = relSelectA.value, b = relSelectB.value; relFindBtn.disabled = !a || !b || a === b; }
+relSelectA.addEventListener('change', updateFindBtn);
+relSelectB.addEventListener('change', updateFindBtn);
 
-function populateDropdowns(data) {
+function populateRelDropdowns(data) {
   const sorted = [...data].sort((a, b) => getFullName(a).localeCompare(getFullName(b)));
-  const opts = sorted.map(d => {
-    const name = getFullName(d);
-    const bday = d.data.birthday ? ` (${d.data.birthday})` : '';
-    return `<option value="${d.id}">${name}${bday}</option>`;
-  }).join('');
-  relSelectA.innerHTML = '<option value="">Pilih anggota keluarga…</option>' + opts;
-  relSelectB.innerHTML = '<option value="">Pilih anggota keluarga…</option>' + opts;
+  sorted.forEach(d => {
+    const label = getFullName(d) || `(ID: ${d.id})`;
+    relSelectA.appendChild(new Option(label, d.id));
+    relSelectB.appendChild(new Option(label, d.id));
+  });
 }
 
+// ─── ID-based seniority helpers ──────────────────────────────────────────
+//
+// IDs follow the convention: 2.1, 2.3, 3.1.1, 4.3.2.1, 4.3.2.1S, etc.
+// Lower last numeric segment = older (born earlier).
+// Spouse IDs end with S, S1, S2 — for seniority we look at their blood partner's ID.
+
+// Strip trailing spouse suffix  (e.g. "2.3S" → "2.3", "4.3.2.1S" → "4.3.2.1")
+function toBloodId(id) { return id.replace(/S\d*$/, ''); }
+
+// Is this a married-in spouse ID?
+function isSpouseId(id) { return /S\d*$/.test(id); }
+
+// For a given node, return the blood ID to use for seniority comparison.
+// Married-in spouse nodes inherit their partner's blood ID.
+function seniorityId(id, dataMap) {
+  if (!isSpouseId(id)) return id;
+  const node = dataMap.get(id);
+  if (!node) return toBloodId(id);
+  // Find their blood spouse
+  const bloodSpouse = node.rels.spouses.find(s => !isSpouseId(s));
+  return bloodSpouse || toBloodId(id);
+}
+
+// Compare last numeric segment of two IDs.
+// Returns true if idA has a LOWER (older) number than idB.
+function isOlderById(idA, idB) {
+  function lastNum(id) {
+    const parts = toBloodId(id).split('.').filter(Boolean);
+    const n = parseInt(parts[parts.length - 1], 10);
+    return isNaN(n) ? 9999 : n;
+  }
+  return lastNum(idA) < lastNum(idB);
+}
+
+// ─── Gender helpers ───────────────────────────────────────────────────────
+function getGender(id, dataMap) { return (dataMap.get(id)?.data?.gender ?? '').toUpperCase(); }
+function isMaleId(id, dataMap)  { return getGender(id, dataMap) === 'M'; }
+
+// ─── BFS shortest path ────────────────────────────────────────────────────
+function findPath(fromId, toId, data) {
+  if (fromId === toId) return [];
+  const adj = new Map();
+  data.forEach(d => {
+    const nb = adj.get(d.id) || [];
+    if (d.rels.father) nb.push({ id: d.rels.father, rel: 'parent' });
+    if (d.rels.mother) nb.push({ id: d.rels.mother, rel: 'parent' });
+    d.rels.children.forEach(c => nb.push({ id: c, rel: 'child' }));
+    d.rels.spouses.forEach(s => nb.push({ id: s, rel: 'spouse' }));
+    adj.set(d.id, nb);
+  });
+  const visited = new Set([fromId]);
+  const queue   = [{ id: fromId, path: [] }];
+  while (queue.length) {
+    const { id, path } = queue.shift();
+    for (const { id: nid, rel } of (adj.get(id) || [])) {
+      if (visited.has(nid)) continue;
+      const np = [...path, { from: id, to: nid, rel }];
+      if (nid === toId) return np;
+      visited.add(nid); queue.push({ id: nid, path: np });
+    }
+  }
+  return null;
+}
+
+// ─── Core kinship resolver ────────────────────────────────────────────────
+//
+// Seniority rule (from user):
+//   The numeric part of the ID at the relevant generation determines birth order.
+//   Lower number = older sibling.
+//   Example: Tiono = 2.1 is older than Tiani = 2.3.
+//   So children of Tiani call Tiono's children "Mas/Mbak Misan",
+//   and they call Tiono himself "Pakde".
+
+function resolveKinshipTerm(path, fromId, dataMap) {
+  if (!path || path.length === 0) return { term: 'diri sendiri', rawPath: '' };
+
+  const dirs = path.map(s => s.rel);
+  const toId = path[path.length - 1].to;
+  const male = isMaleId(toId, dataMap);
+  const len  = dirs.length;
+
+  function rawStr() {
+    return path.map(s => {
+      const g = getGender(s.to, dataMap);
+      if (s.rel === 'parent') return g === 'F' ? 'ibu' : 'bapak';
+      if (s.rel === 'child')  return g === 'F' ? 'anak perempuan' : 'anak laki-laki';
+      if (s.rel === 'spouse') return g === 'F' ? 'istri' : 'suami';
+      return s.rel;
+    }).join(' → ');
+  }
+
+  // Shorthand: dirs joined
+  const d = dirs.join(',');
+
+  // ── 1-hop ──────────────────────────────────────────────────────────────
+  if (d === 'parent') return { term: male ? 'Bapak' : 'Ibu', rawPath: '' };
+  if (d === 'child')  return { term: male ? 'Anak laki-laki' : 'Anak perempuan', rawPath: '' };
+  if (d === 'spouse') return { term: male ? 'Suami' : 'Istri', rawPath: '' };
+
+  // ── 2-hop ──────────────────────────────────────────────────────────────
+  // Grandparent
+  if (d === 'parent,parent') return { term: male ? 'Mbah Kakung' : 'Mbah Putri', rawPath: '' };
+  // Grandchild
+  if (d === 'child,child') return { term: male ? 'Cucu laki-laki' : 'Cucu perempuan', rawPath: '' };
+  // Sibling: A→parent→B (B is sibling of A)
+  if (d === 'parent,child') {
+    // Compare blood IDs: B's seniority ID vs A's seniority ID
+    const bSen = seniorityId(toId, dataMap);
+    const aSen = seniorityId(fromId, dataMap);
+    const bOlder = isOlderById(bSen, aSen);
+    if (male) return { term: bOlder ? 'Mas (kakak laki-laki)' : 'Adik laki-laki', rawPath: '' };
+    else      return { term: bOlder ? 'Mbak (kakak perempuan)' : 'Adik perempuan', rawPath: '' };
+  }
+  // Menantu
+  if (d === 'child,spouse') return { term: male ? 'Menantu laki-laki' : 'Menantu perempuan', rawPath: '' };
+  // Mertua
+  if (d === 'spouse,parent') return { term: male ? 'Mertua laki-laki' : 'Mertua perempuan', rawPath: '' };
+  // Sibling via spouse (A→spouse→parent→child is ipar, but parent,child via spouse first = same sibling logic)
+
+  // ── 3-hop ──────────────────────────────────────────────────────────────
+  // Great-grandparent
+  if (d === 'parent,parent,parent') return { term: male ? 'Mbah Buyut laki-laki' : 'Mbah Buyut perempuan', rawPath: '' };
+  // Great-grandchild
+  if (d === 'child,child,child') return { term: male ? 'Buyut laki-laki' : 'Buyut perempuan', rawPath: '' };
+
+  // Nephew/Niece: A→parent→sibling→child
+  if (d === 'parent,child,child') return { term: male ? 'Keponakan laki-laki' : 'Keponakan perempuan', rawPath: '' };
+  // Nephew/Niece via spouse sibling
+  if (d === 'spouse,child,child') return { term: male ? 'Keponakan laki-laki' : 'Keponakan perempuan', rawPath: '' };
+
+  // Uncle/Aunt: A→parent→grandparent→B
+  if (d === 'parent,parent,child') {
+    // A's parent = path[0].to, B = toId
+    const myParentId = path[0].to;
+    const myParentSen = seniorityId(myParentId, dataMap);
+    const bSen        = seniorityId(toId, dataMap);
+    const bOlder      = isOlderById(bSen, myParentSen);
+    if (male) return { term: bOlder ? 'Pakde' : 'Paklik', rawPath: '' };
+    else      return { term: bOlder ? 'Bude' : 'Bulik', rawPath: '' };
+  }
+
+  // Ipar (sibling-in-law)
+  if (d === 'spouse,parent,child') return { term: male ? 'Ipar laki-laki' : 'Ipar perempuan', rawPath: '' };
+
+  // ── 4-hop ──────────────────────────────────────────────────────────────
+  // 2× great-grandparent (Canggah)
+  if (d === 'parent,parent,parent,parent') return { term: male ? 'Mbah Canggah laki-laki' : 'Mbah Canggah perempuan', rawPath: '' };
+  // 2× great-grandchild
+  if (d === 'child,child,child,child') return { term: male ? 'Canggah laki-laki' : 'Canggah perempuan', rawPath: '' };
+
+  // Spouse of uncle/aunt: A→parent→grandparent→blood_uncle→spouse
+  if (d === 'parent,parent,child,spouse') {
+    const myParentId   = path[0].to;
+    const bloodSibId   = path[2].to;          // blood uncle/aunt
+    const myParentSen  = seniorityId(myParentId, dataMap);
+    const bloodSibSen  = seniorityId(bloodSibId, dataMap);
+    const sibOlder     = isOlderById(bloodSibSen, myParentSen);
+    if (male) return { term: sibOlder ? 'Pakde' : 'Paklik', rawPath: '' };
+    else      return { term: sibOlder ? 'Bude' : 'Bulik', rawPath: '' };
+  }
+
+  // First cousin: A→parent→grandparent→their_parent→B
+  if (d === 'parent,parent,child,child') {
+    const myParentId    = path[0].to;
+    const theirParentId = path[2].to;
+    const myParSen      = seniorityId(myParentId, dataMap);
+    const theirParSen   = seniorityId(theirParentId, dataMap);
+    const theirParOlder = isOlderById(theirParSen, myParSen);
+    if (male) return { term: theirParOlder ? 'Mas Misan (sepupu)' : 'Adik Misan (sepupu)', rawPath: '' };
+    else      return { term: theirParOlder ? 'Mbak Misan (sepupu)' : 'Adik Misan (sepupu)', rawPath: '' };
+  }
+
+  // Grand-uncle/aunt (saudara kakek/nenek)
+  if (d === 'parent,parent,parent,child') {
+    return { term: male ? 'Mbah Pakde / Mbah Paklik' : 'Mbah Bude / Mbah Bulik', rawPath: '' };
+  }
+
+  // ── 5-hop ──────────────────────────────────────────────────────────────
+  // 3× great-grandparent (Wareng)
+  if (d === 'parent,parent,parent,parent,parent') return { term: male ? 'Mbah Wareng laki-laki' : 'Mbah Wareng perempuan', rawPath: '' };
+
+  // First cousin once removed (child of uncle/aunt's first cousin, or cousin of parent)
+  if (d === 'parent,parent,parent,child,child') {
+    return { term: male ? 'Sepupu jauh (mindoan) laki-laki' : 'Sepupu jauh (mindoan) perempuan', rawPath: '' };
+  }
+
+  // ── 6-hop ──────────────────────────────────────────────────────────────
+  // Second cousin: parent×3 → child×3
+  if (d === 'parent,parent,parent,child,child,child') {
+    const myParentId    = path[0].to;
+    const theirParentId = path[3].to;
+    const myParSen      = seniorityId(myParentId, dataMap);
+    const theirParSen   = seniorityId(theirParentId, dataMap);
+    const theirParOlder = isOlderById(theirParSen, myParSen);
+    if (male) return { term: theirParOlder ? 'Mas Mindoan (sepupu mindoan)' : 'Adik Mindoan (sepupu mindoan)', rawPath: '' };
+    else      return { term: theirParOlder ? 'Mbak Mindoan (sepupu mindoan)' : 'Adik Mindoan (sepupu mindoan)', rawPath: '' };
+  }
+
+  // ── Fallback ──────────────────────────────────────────────────────────
+  return { term: null, rawPath: rawStr() };
+}
+
+// ─── Find handler ─────────────────────────────────────────────────────────
 relFindBtn.addEventListener('click', () => {
   const idA = relSelectA.value, idB = relSelectB.value;
-  relResult.classList.remove('show'); relResult.innerHTML = '';
-
-  if (!idA || !idB) {
-    relResult.innerHTML = `<div class="rel-result-error">Pilih dua anggota keluarga terlebih dahulu.</div>`;
-    relResult.classList.add('show'); return;
-  }
-  if (idA === idB) {
-    relResult.innerHTML = `<div class="rel-result-same">A dan B adalah orang yang sama.</div>`;
-    relResult.classList.add('show'); return;
-  }
+  if (!idA || !idB || idA === idB) return;
 
   const dataMap = new Map(chartData.map(d => [d.id, d]));
-  const personA = dataMap.get(idA), personB = dataMap.get(idB);
-  const nameA   = getFullName(personA), nameB = getFullName(personB);
-  const path    = findPath(dataMap, idA, idB);
+  const nameA   = getFullName(dataMap.get(idA));
+  const nameB   = getFullName(dataMap.get(idB));
+  const path    = findPath(idA, idB, chartData);
 
-  if (!path) {
-    relResult.innerHTML = `<div class="rel-result-error">Tidak ditemukan hubungan antara <strong>${nameA}</strong> dan <strong>${nameB}</strong>.</div>`;
-    relResult.classList.add('show'); return;
+  relResult.classList.add('visible');
+  relPathChain.textContent = '';
+
+  if (path === null) {
+    relSentence.innerHTML = `<span class="rel-not-found">Tidak ditemukan hubungan antara <strong>${nameA}</strong> dan <strong>${nameB}</strong>.</span>`;
+    return;
+  }
+  if (path.length === 0) {
+    relSentence.innerHTML = `<strong>${nameA}</strong> dan <strong>${nameB}</strong> adalah orang yang sama.`;
+    return;
   }
 
-  const steps    = pathToSteps(dataMap, path);
-  const relation = deriveJavaneseRelation(steps, personA, personB, dataMap, path);
-  const rawPath  = stepsToRawPath(steps);
+  const { term, rawPath } = resolveKinshipTerm(path, idA, dataMap);
 
-  let html = '';
-  if (relation?.isSame) {
-    html = `<div class="rel-result-same">A dan B adalah orang yang sama.</div>`;
-  } else if (relation?.term) {
-    html = `
-      <div class="rel-result-sentence">
-        <strong>${nameA}</strong> harus memanggil <strong>${relation.term}</strong> ke <strong>${nameB}</strong>.
-      </div>
-      ${relation.desc ? `<div class="rel-result-desc">↳ ${relation.desc}</div>` : ''}
-      <div class="rel-result-path">${rawPath}</div>
-    `;
+  if (term) {
+    relSentence.innerHTML = `<strong>${nameA}</strong> harus memanggil <strong style="color:#f0c060">${term}</strong> ke <strong>${nameB}</strong>.`;
+    const steps = path.map(s => {
+      const g = getGender(s.to, dataMap);
+      if (s.rel === 'parent') return g === 'F' ? '↑ibu' : '↑bapak';
+      if (s.rel === 'child')  return g === 'F' ? '↓♀' : '↓♂';
+      if (s.rel === 'spouse') return '↔';
+      return s.rel;
+    });
+    relPathChain.textContent = steps.join('  ');
   } else {
-    // No named Javanese term — show raw path only
-    html = `
-      <div class="rel-result-sentence">
-        <strong>${nameA}</strong> dan <strong>${nameB}</strong> masih berhubungan keluarga, tetapi tidak ada istilah panggilan Jawa yang spesifik.
-      </div>
-      <div class="rel-result-path">${rawPath}</div>
-    `;
+    relSentence.innerHTML = `<strong>${nameA}</strong> ke <strong>${nameB}</strong>: <em style="color:rgba(255,255,255,0.4)">(belum ada istilah Jawa khusus)</em>`;
+    relPathChain.textContent = `Jalur: ${rawPath}`;
   }
-
-  relResult.innerHTML = html;
-  relResult.classList.add('show');
 });
 
 // ════════════════════════════════════════
@@ -748,12 +612,11 @@ relFindBtn.addEventListener('click', () => {
 // ════════════════════════════════════════
 function create(data) {
   chartData = data;
-  document.getElementById('loading-overlay').style.display  = 'none';
-  document.getElementById('FamilyChart').style.display      = 'block';
+  document.getElementById('loading-overlay').style.display = 'none';
+  document.getElementById('FamilyChart').style.display     = 'block';
   document.getElementById('search-container').style.display = 'block';
   relToggleBtn.style.display = 'flex';
-
-  populateDropdowns(data);
+  populateRelDropdowns(data);
 
   const f3Chart = f3.createChart('#FamilyChart', data)
     .setTransitionTime(1000)
@@ -780,31 +643,20 @@ function create(data) {
     .setCardClickOpen(f3Card);
 
   f3EditTree.setEdit();
-  f3Chart.updateTree({initial: true});
+  f3Chart.updateTree({ initial: true });
   f3EditTree.open(f3Chart.getMainDatum());
-  f3Chart.updateTree({initial: true});
+  f3Chart.updateTree({ initial: true });
 }
 
 function showError(msg) {
   document.getElementById('loading-overlay').style.display = 'none';
   const box = document.getElementById('error-box');
   box.style.display = 'block';
-  box.innerHTML = `
-    <h3 style="color:#ff6b6b;margin-top:0">⚠️ Could not load family data</h3>
-    <pre style="white-space:pre-wrap;word-break:break-word;">${msg}</pre>
-    <br>
-    <strong>Checklist:</strong><br>
-    1. Replace <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code>.<br>
-    2. Table <code>${TABLE_NAME}</code> must be public read in Supabase RLS.<br>
-    3. Open browser console (F12) for more details.
-  `;
+  box.innerHTML = `<h3 style="color:#ff6b6b;margin-top:0">⚠️ Could not load family data</h3><pre style="white-space:pre-wrap;word-break:break-word;">${msg}</pre>`;
 }
 
 fetchFromSupabase()
-  .then(rows => {
-    if (!rows.length) throw new Error('Table is empty — import your CSV first.');
-    create(rowsToChartData(rows));
-  })
+  .then(rows => { if (!rows.length) throw new Error('Table is empty.'); create(rowsToChartData(rows)); })
   .catch(err => { console.error(err); showError(err.message); });
 
 </script>
