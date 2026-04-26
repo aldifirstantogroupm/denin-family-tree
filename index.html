@@ -254,7 +254,7 @@ async function fetchFromSupabase() {
 
 function splitPipe(val) {
   if (!val || val === '' || val === '0') return [];
-  return val.split('|').filter(v => v && v !== '0');
+  return val.split('|').map(v => String(v).trim()).filter(v => v && v !== '0');
 }
 
 function rowsToChartData(rows) {
@@ -372,10 +372,10 @@ function populateRelDropdowns(data) {
 // Spouse IDs end with S, S1, S2 — for seniority we look at their blood partner's ID.
 
 // Strip trailing spouse suffix  (e.g. "2.3S" → "2.3", "4.3.2.1S" → "4.3.2.1")
-function toBloodId(id) { return id.replace(/S\d*$/, ''); }
+function toBloodId(id) { return String(id || '').replace(/S\d*$/, ''); }
 
 // Is this a married-in spouse ID?
-function isSpouseId(id) { return /S\d*$/.test(id); }
+function isSpouseId(id) { return /S\d*$/.test(String(id || '')); }
 
 // For a given node, return the blood ID to use for seniority comparison.
 // Married-in spouse nodes inherit their partner's blood ID.
@@ -430,141 +430,260 @@ function findPath(fromId, toId, data) {
 }
 
 // ─── Core kinship resolver ────────────────────────────────────────────────
-//
-// Seniority rule (from user):
-//   The numeric part of the ID at the relevant generation determines birth order.
-//   Lower number = older sibling.
-//   Example: Tiono = 2.1 is older than Tiani = 2.3.
-//   So children of Tiani call Tiono's children "Mas/Mbak Misan",
-//   and they call Tiono himself "Pakde".
+// New relationship resolver.
+// It names kinship from the genealogy itself, then applies Javanese seniority
+// from the semantic ID order. This is less brittle than matching one shortest
+// graph path at a time, especially when spouse links are present.
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
 
-function resolveKinshipTerm(path, fromId, dataMap) {
+function relGenderCode(id, dataMap) {
+  const g = String(dataMap.get(id)?.data?.gender ?? '').trim().toLowerCase();
+  if (['m', 'male', 'l', 'laki-laki', 'pria'].includes(g)) return 'M';
+  if (['f', 'female', 'p', 'perempuan', 'wanita'].includes(g)) return 'F';
+  return '';
+}
+function relGetGender(id, dataMap) { return relGenderCode(id, dataMap); }
+function relGendered(id, dataMap, maleTerm, femaleTerm, fallbackTerm = maleTerm) {
+  const g = relGenderCode(id, dataMap);
+  if (g === 'M') return maleTerm;
+  if (g === 'F') return femaleTerm;
+  return fallbackTerm;
+}
+
+function relNumericIdParts(id) {
+  return toBloodId(id).split('.').map(part => {
+    const match = String(part).match(/\d+/);
+    return match ? Number(match[0]) : Number.POSITIVE_INFINITY;
+  });
+}
+function relCompareIdOrder(idA, idB) {
+  const a = relNumericIdParts(idA), b = relNumericIdParts(idB);
+  const len = Math.max(a.length, b.length);
+  for (let i = 0; i < len; i++) {
+    const av = a[i] ?? Number.POSITIVE_INFINITY;
+    const bv = b[i] ?? Number.POSITIVE_INFINITY;
+    if (av !== bv) return av - bv;
+  }
+  return String(toBloodId(idA)).localeCompare(String(toBloodId(idB)));
+}
+function relIsOlderById(idA, idB) { return relCompareIdOrder(idA, idB) < 0; }
+
+function relBuildFamilyIndex(dataMap) {
+  const parentsByChild = new Map();
+  const childrenByParent = new Map();
+  const spousesById = new Map();
+  const add = (map, key, value) => {
+    if (!key || !value || key === value) return;
+    if (!map.has(key)) map.set(key, new Set());
+    map.get(key).add(value);
+  };
+
+  dataMap.forEach(d => {
+    [d.rels.father, d.rels.mother].filter(Boolean).forEach(parentId => {
+      add(parentsByChild, d.id, parentId);
+      add(childrenByParent, parentId, d.id);
+    });
+    (d.rels.children || []).forEach(childId => {
+      add(childrenByParent, d.id, childId);
+      add(parentsByChild, childId, d.id);
+    });
+    (d.rels.spouses || []).forEach(spouseId => {
+      add(spousesById, d.id, spouseId);
+      add(spousesById, spouseId, d.id);
+    });
+  });
+
+  return { parentsByChild, childrenByParent, spousesById };
+}
+
+function relSpouseIds(id, index) { return [...(index.spousesById.get(id) || [])]; }
+function relParentIds(id, index) { return [...(index.parentsByChild.get(id) || [])]; }
+function relChildIds(id, index) { return [...(index.childrenByParent.get(id) || [])]; }
+
+function relBloodPartnerId(id, index) {
+  const bloodBase = toBloodId(id);
+  if (isSpouseId(id) && index.spousesById.get(id)?.has(bloodBase)) return bloodBase;
+  return relSpouseIds(id, index).find(spouseId => !isSpouseId(spouseId)) || (isSpouseId(id) ? bloodBase : null);
+}
+function relSeniorityId(id, dataMap, index) {
+  if (!isSpouseId(id)) return id;
+  return relBloodPartnerId(id, index) || toBloodId(id);
+}
+
+function relAncestorMap(startId, index) {
+  const out = new Map([[startId, { distance: 0, path: [startId] }]]);
+  const queue = [{ id: startId, path: [startId] }];
+  while (queue.length) {
+    const { id, path } = queue.shift();
+    relParentIds(id, index).forEach(parentId => {
+      if (out.has(parentId)) return;
+      const nextPath = [...path, parentId];
+      out.set(parentId, { distance: nextPath.length - 1, path: nextPath });
+      queue.push({ id: parentId, path: nextPath });
+    });
+  }
+  return out;
+}
+
+function relCommonAncestorInfo(fromId, toId, index) {
+  const fromAnc = relAncestorMap(fromId, index);
+  const toAnc = relAncestorMap(toId, index);
+  let best = null;
+  fromAnc.forEach((fromInfo, ancestorId) => {
+    const toInfo = toAnc.get(ancestorId);
+    if (!toInfo) return;
+    const score = fromInfo.distance + toInfo.distance;
+    const maxDistance = Math.max(fromInfo.distance, toInfo.distance);
+    if (!best || score < best.score || (score === best.score && maxDistance < best.maxDistance)) {
+      best = { ancestorId, fromInfo, toInfo, up: fromInfo.distance, down: toInfo.distance, score, maxDistance };
+    }
+  });
+  return best;
+}
+
+function relAncestorTerm(distance, id, dataMap) {
+  if (distance === 1) return relGendered(id, dataMap, 'Bapak', 'Ibu', 'Orang tua');
+  if (distance === 2) return relGendered(id, dataMap, 'Mbah Kakung', 'Mbah Putri', 'Mbah');
+  if (distance === 3) return relGendered(id, dataMap, 'Mbah Buyut Kakung', 'Mbah Buyut Putri', 'Mbah Buyut');
+  if (distance === 4) return relGendered(id, dataMap, 'Mbah Canggah Kakung', 'Mbah Canggah Putri', 'Mbah Canggah');
+  if (distance === 5) return relGendered(id, dataMap, 'Mbah Wareng Kakung', 'Mbah Wareng Putri', 'Mbah Wareng');
+  return relGendered(id, dataMap, `Leluhur ${distance} generasi laki-laki`, `Leluhur ${distance} generasi perempuan`, `Leluhur ${distance} generasi`);
+}
+
+function relDescendantTerm(distance, id, dataMap) {
+  if (distance === 1) return relGendered(id, dataMap, 'Anak laki-laki', 'Anak perempuan', 'Anak');
+  if (distance === 2) return relGendered(id, dataMap, 'Cucu laki-laki', 'Cucu perempuan', 'Cucu');
+  if (distance === 3) return relGendered(id, dataMap, 'Buyut laki-laki', 'Buyut perempuan', 'Buyut');
+  if (distance === 4) return relGendered(id, dataMap, 'Canggah laki-laki', 'Canggah perempuan', 'Canggah');
+  if (distance === 5) return relGendered(id, dataMap, 'Wareng laki-laki', 'Wareng perempuan', 'Wareng');
+  return relGendered(id, dataMap, `Keturunan ${distance} generasi laki-laki`, `Keturunan ${distance} generasi perempuan`, `Keturunan ${distance} generasi`);
+}
+
+function relSiblingTerm(fromId, toId, dataMap, index) {
+  const toOlder = relIsOlderById(relSeniorityId(toId, dataMap, index), relSeniorityId(fromId, dataMap, index));
+  if (toOlder) return relGendered(toId, dataMap, 'Mas', 'Mbak', 'Kakak');
+  return relGendered(toId, dataMap, 'Adik laki-laki', 'Adik perempuan', 'Adik');
+}
+
+function relUncleAuntTerm(relativeId, comparisonId, dataMap, index, prefix = '') {
+  const relativeOlder = relIsOlderById(relSeniorityId(relativeId, dataMap, index), relSeniorityId(comparisonId, dataMap, index));
+  const base = relGenderCode(relativeId, dataMap) === 'F'
+    ? (relativeOlder ? 'Bude' : 'Bulik')
+    : (relativeOlder ? 'Pakde' : 'Paklik');
+  return `${prefix}${base}`;
+}
+
+function relCousinLevelName(degree) {
+  if (degree === 1) return 'Misan';
+  if (degree === 2) return 'Mindoan';
+  if (degree === 3) return 'Mentelu';
+  return `Sepupu tingkat ${degree}`;
+}
+
+function relCousinTerm(fromBranchId, toBranchId, toId, degree, dataMap, index) {
+  const level = relCousinLevelName(degree);
+  const toBranchOlder = relIsOlderById(relSeniorityId(toBranchId, dataMap, index), relSeniorityId(fromBranchId, dataMap, index));
+  if (toBranchOlder) return relGendered(toId, dataMap, `Mas ${level}`, `Mbak ${level}`, `Kakak ${level}`);
+  return `Adik ${level}`;
+}
+
+function relPathLabel(path, dataMap) {
+  if (!path || !path.length) return '';
+  return path.map(s => {
+    const g = relGetGender(s.to, dataMap);
+    if (s.rel === 'parent') return g === 'F' ? 'ibu' : (g === 'M' ? 'bapak' : 'orang tua');
+    if (s.rel === 'child') return g === 'F' ? 'anak perempuan' : (g === 'M' ? 'anak laki-laki' : 'anak');
+    if (s.rel === 'spouse') return g === 'F' ? 'istri' : (g === 'M' ? 'suami' : 'pasangan');
+    return s.rel;
+  }).join(' -> ');
+}
+
+function relResolveBloodKinship(fromId, toId, dataMap, index) {
+  const info = relCommonAncestorInfo(fromId, toId, index);
+  if (!info) return null;
+  const { up, down, fromInfo, toInfo } = info;
+
+  if (up === 0 && down === 0) return 'diri sendiri';
+  if (down === 0) return relAncestorTerm(up, toId, dataMap);
+  if (up === 0) return relDescendantTerm(down, toId, dataMap);
+  if (up === 1 && down === 1) return relSiblingTerm(fromId, toId, dataMap, index);
+  if (up === 1 && down > 1) return relGendered(toId, dataMap, 'Keponakan laki-laki', 'Keponakan perempuan', 'Keponakan');
+
+  const fromBranch = fromInfo.path[fromInfo.path.length - 2];
+  const toBranch = toInfo.path[toInfo.path.length - 2];
+
+  if (up > 1 && down === 1) {
+    const prefix = up === 2 ? '' : (up === 3 ? 'Mbah ' : `${relAncestorTerm(up - 1, fromBranch, dataMap)} `);
+    return relUncleAuntTerm(toId, fromBranch, dataMap, index, prefix);
+  }
+
+  const degree = Math.min(up, down) - 1;
+  if (up === down) return relCousinTerm(fromBranch, toBranch, toId, degree, dataMap, index);
+  if (up > down) return `${relUncleAuntTerm(toBranch, fromBranch, dataMap, index)} ${relCousinLevelName(degree)}`;
+  return relGendered(toId, dataMap, `Keponakan ${relCousinLevelName(degree)} laki-laki`, `Keponakan ${relCousinLevelName(degree)} perempuan`, `Keponakan ${relCousinLevelName(degree)}`);
+}
+
+function resolveKinshipTermV2(path, fromId, dataMap) {
   if (!path || path.length === 0) return { term: 'diri sendiri', rawPath: '' };
 
-  const dirs = path.map(s => s.rel);
   const toId = path[path.length - 1].to;
-  const male = isMaleId(toId, dataMap);
-  const len  = dirs.length;
+  const index = relBuildFamilyIndex(dataMap);
+  const rawPath = relPathLabel(path, dataMap);
 
-  function rawStr() {
-    return path.map(s => {
-      const g = getGender(s.to, dataMap);
-      if (s.rel === 'parent') return g === 'F' ? 'ibu' : 'bapak';
-      if (s.rel === 'child')  return g === 'F' ? 'anak perempuan' : 'anak laki-laki';
-      if (s.rel === 'spouse') return g === 'F' ? 'istri' : 'suami';
-      return s.rel;
-    }).join(' → ');
+  if (relSpouseIds(fromId, index).includes(toId)) {
+    return { term: relGendered(toId, dataMap, 'Suami', 'Istri', 'Pasangan'), rawPath };
   }
 
-  // Shorthand: dirs joined
-  const d = dirs.join(',');
-
-  // ── 1-hop ──────────────────────────────────────────────────────────────
-  if (d === 'parent') return { term: male ? 'Bapak' : 'Ibu', rawPath: '' };
-  if (d === 'child')  return { term: male ? 'Anak laki-laki' : 'Anak perempuan', rawPath: '' };
-  if (d === 'spouse') return { term: male ? 'Suami' : 'Istri', rawPath: '' };
-
-  // ── 2-hop ──────────────────────────────────────────────────────────────
-  // Grandparent
-  if (d === 'parent,parent') return { term: male ? 'Mbah Kakung' : 'Mbah Putri', rawPath: '' };
-  // Grandchild
-  if (d === 'child,child') return { term: male ? 'Cucu laki-laki' : 'Cucu perempuan', rawPath: '' };
-  // Sibling: A→parent→B (B is sibling of A)
-  if (d === 'parent,child') {
-    // Compare blood IDs: B's seniority ID vs A's seniority ID
-    const bSen = seniorityId(toId, dataMap);
-    const aSen = seniorityId(fromId, dataMap);
-    const bOlder = isOlderById(bSen, aSen);
-    if (male) return { term: bOlder ? 'Mas (kakak laki-laki)' : 'Adik laki-laki', rawPath: '' };
-    else      return { term: bOlder ? 'Mbak (kakak perempuan)' : 'Adik perempuan', rawPath: '' };
+  const fromSpouses = relSpouseIds(fromId, index);
+  if (fromSpouses.some(spouseId => relParentIds(spouseId, index).includes(toId))) {
+    return { term: relGendered(toId, dataMap, 'Mertua laki-laki', 'Mertua perempuan', 'Mertua'), rawPath };
   }
-  // Menantu
-  if (d === 'child,spouse') return { term: male ? 'Menantu laki-laki' : 'Menantu perempuan', rawPath: '' };
-  // Mertua
-  if (d === 'spouse,parent') return { term: male ? 'Mertua laki-laki' : 'Mertua perempuan', rawPath: '' };
-  // Sibling via spouse (A→spouse→parent→child is ipar, but parent,child via spouse first = same sibling logic)
-
-  // ── 3-hop ──────────────────────────────────────────────────────────────
-  // Great-grandparent
-  if (d === 'parent,parent,parent') return { term: male ? 'Mbah Buyut laki-laki' : 'Mbah Buyut perempuan', rawPath: '' };
-  // Great-grandchild
-  if (d === 'child,child,child') return { term: male ? 'Buyut laki-laki' : 'Buyut perempuan', rawPath: '' };
-
-  // Nephew/Niece: A→parent→sibling→child
-  if (d === 'parent,child,child') return { term: male ? 'Keponakan laki-laki' : 'Keponakan perempuan', rawPath: '' };
-  // Nephew/Niece via spouse sibling
-  if (d === 'spouse,child,child') return { term: male ? 'Keponakan laki-laki' : 'Keponakan perempuan', rawPath: '' };
-
-  // Uncle/Aunt: A→parent→grandparent→B
-  if (d === 'parent,parent,child') {
-    // A's parent = path[0].to, B = toId
-    const myParentId = path[0].to;
-    const myParentSen = seniorityId(myParentId, dataMap);
-    const bSen        = seniorityId(toId, dataMap);
-    const bOlder      = isOlderById(bSen, myParentSen);
-    if (male) return { term: bOlder ? 'Pakde' : 'Paklik', rawPath: '' };
-    else      return { term: bOlder ? 'Bude' : 'Bulik', rawPath: '' };
+  if (relChildIds(fromId, index).some(childId => relSpouseIds(childId, index).includes(toId))) {
+    return { term: relGendered(toId, dataMap, 'Menantu laki-laki', 'Menantu perempuan', 'Menantu'), rawPath };
+  }
+  if (fromSpouses.some(spouseId => {
+    const term = relResolveBloodKinship(spouseId, toId, dataMap, index);
+    return term && (term.includes('Mas') || term.includes('Mbak') || term.includes('Adik'));
+  })) {
+    return { term: relGendered(toId, dataMap, 'Ipar laki-laki', 'Ipar perempuan', 'Ipar'), rawPath };
   }
 
-  // Ipar (sibling-in-law)
-  if (d === 'spouse,parent,child') return { term: male ? 'Ipar laki-laki' : 'Ipar perempuan', rawPath: '' };
+  const bloodTerm = relResolveBloodKinship(fromId, toId, dataMap, index);
+  if (bloodTerm) return { term: bloodTerm, rawPath };
 
-  // ── 4-hop ──────────────────────────────────────────────────────────────
-  // 2× great-grandparent (Canggah)
-  if (d === 'parent,parent,parent,parent') return { term: male ? 'Mbah Canggah laki-laki' : 'Mbah Canggah perempuan', rawPath: '' };
-  // 2× great-grandchild
-  if (d === 'child,child,child,child') return { term: male ? 'Canggah laki-laki' : 'Canggah perempuan', rawPath: '' };
-
-  // Spouse of uncle/aunt: A→parent→grandparent→blood_uncle→spouse
-  if (d === 'parent,parent,child,spouse') {
-    const myParentId   = path[0].to;
-    const bloodSibId   = path[2].to;          // blood uncle/aunt
-    const myParentSen  = seniorityId(myParentId, dataMap);
-    const bloodSibSen  = seniorityId(bloodSibId, dataMap);
-    const sibOlder     = isOlderById(bloodSibSen, myParentSen);
-    if (male) return { term: sibOlder ? 'Pakde' : 'Paklik', rawPath: '' };
-    else      return { term: sibOlder ? 'Bude' : 'Bulik', rawPath: '' };
+  const toPartner = relBloodPartnerId(toId, index);
+  if (toPartner) {
+    const partnerTerm = relResolveBloodKinship(fromId, toPartner, dataMap, index);
+    if (partnerTerm) {
+      if (['Bapak', 'Ibu', 'Orang tua'].includes(partnerTerm)) return { term: relGendered(toId, dataMap, 'Bapak', 'Ibu', 'Orang tua'), rawPath };
+      if (partnerTerm.includes('Pak') || partnerTerm.includes('Bu') || partnerTerm.includes('Mbah')) {
+        const info = relCommonAncestorInfo(fromId, toPartner, index);
+        const comparisonId = info?.fromInfo?.path?.[info.fromInfo.path.length - 2] || fromId;
+        const partnerOlder = relIsOlderById(relSeniorityId(toPartner, dataMap, index), relSeniorityId(comparisonId, dataMap, index));
+        const spouseTerm = relGenderCode(toId, dataMap) === 'F'
+          ? (partnerOlder ? 'Bude' : 'Bulik')
+          : (partnerOlder ? 'Pakde' : 'Paklik');
+        return { term: spouseTerm, rawPath };
+      }
+      if (partnerTerm.includes('Anak')) return { term: relGendered(toId, dataMap, 'Menantu laki-laki', 'Menantu perempuan', 'Menantu'), rawPath };
+      if (partnerTerm.includes('Mas') || partnerTerm.includes('Mbak') || partnerTerm.includes('Adik')) return { term: relGendered(toId, dataMap, 'Ipar laki-laki', 'Ipar perempuan', 'Ipar'), rawPath };
+      return { term: `Pasangan dari ${partnerTerm}`, rawPath };
+    }
   }
 
-  // First cousin: A→parent→grandparent→their_parent→B
-  if (d === 'parent,parent,child,child') {
-    const myParentId    = path[0].to;
-    const theirParentId = path[2].to;
-    const myParSen      = seniorityId(myParentId, dataMap);
-    const theirParSen   = seniorityId(theirParentId, dataMap);
-    const theirParOlder = isOlderById(theirParSen, myParSen);
-    if (male) return { term: theirParOlder ? 'Mas Misan (sepupu)' : 'Adik Misan (sepupu)', rawPath: '' };
-    else      return { term: theirParOlder ? 'Mbak Misan (sepupu)' : 'Adik Misan (sepupu)', rawPath: '' };
+  const fromPartner = relBloodPartnerId(fromId, index);
+  if (fromPartner) {
+    const partnerToTarget = relResolveBloodKinship(fromPartner, toId, dataMap, index);
+    if (partnerToTarget) {
+      if (['Bapak', 'Ibu', 'Orang tua'].includes(partnerToTarget)) return { term: relGendered(toId, dataMap, 'Mertua laki-laki', 'Mertua perempuan', 'Mertua'), rawPath };
+      if (partnerToTarget.includes('Mas') || partnerToTarget.includes('Mbak') || partnerToTarget.includes('Adik')) return { term: relGendered(toId, dataMap, 'Ipar laki-laki', 'Ipar perempuan', 'Ipar'), rawPath };
+      return { term: partnerToTarget, rawPath };
+    }
   }
 
-  // Grand-uncle/aunt (saudara kakek/nenek)
-  if (d === 'parent,parent,parent,child') {
-    return { term: male ? 'Mbah Pakde / Mbah Paklik' : 'Mbah Bude / Mbah Bulik', rawPath: '' };
-  }
-
-  // ── 5-hop ──────────────────────────────────────────────────────────────
-  // 3× great-grandparent (Wareng)
-  if (d === 'parent,parent,parent,parent,parent') return { term: male ? 'Mbah Wareng laki-laki' : 'Mbah Wareng perempuan', rawPath: '' };
-
-  // First cousin once removed (child of uncle/aunt's first cousin, or cousin of parent)
-  if (d === 'parent,parent,parent,child,child') {
-    return { term: male ? 'Sepupu jauh (mindoan) laki-laki' : 'Sepupu jauh (mindoan) perempuan', rawPath: '' };
-  }
-
-  // ── 6-hop ──────────────────────────────────────────────────────────────
-  // Second cousin: parent×3 → child×3
-  if (d === 'parent,parent,parent,child,child,child') {
-    const myParentId    = path[0].to;
-    const theirParentId = path[3].to;
-    const myParSen      = seniorityId(myParentId, dataMap);
-    const theirParSen   = seniorityId(theirParentId, dataMap);
-    const theirParOlder = isOlderById(theirParSen, myParSen);
-    if (male) return { term: theirParOlder ? 'Mas Mindoan (sepupu mindoan)' : 'Adik Mindoan (sepupu mindoan)', rawPath: '' };
-    else      return { term: theirParOlder ? 'Mbak Mindoan (sepupu mindoan)' : 'Adik Mindoan (sepupu mindoan)', rawPath: '' };
-  }
-
-  // ── Fallback ──────────────────────────────────────────────────────────
-  return { term: null, rawPath: rawStr() };
+  return { term: null, rawPath };
 }
 
 // ─── Find handler ─────────────────────────────────────────────────────────
@@ -575,26 +694,28 @@ relFindBtn.addEventListener('click', () => {
   const dataMap = new Map(chartData.map(d => [d.id, d]));
   const nameA   = getFullName(dataMap.get(idA));
   const nameB   = getFullName(dataMap.get(idB));
+  const safeNameA = escapeHtml(nameA);
+  const safeNameB = escapeHtml(nameB);
   const path    = findPath(idA, idB, chartData);
 
   relResult.classList.add('visible');
   relPathChain.textContent = '';
 
   if (path === null) {
-    relSentence.innerHTML = `<span class="rel-not-found">Tidak ditemukan hubungan antara <strong>${nameA}</strong> dan <strong>${nameB}</strong>.</span>`;
+    relSentence.innerHTML = `<span class="rel-not-found">Tidak ditemukan hubungan antara <strong>${safeNameA}</strong> dan <strong>${safeNameB}</strong>.</span>`;
     return;
   }
   if (path.length === 0) {
-    relSentence.innerHTML = `<strong>${nameA}</strong> dan <strong>${nameB}</strong> adalah orang yang sama.`;
+    relSentence.innerHTML = `<strong>${safeNameA}</strong> dan <strong>${safeNameB}</strong> adalah orang yang sama.`;
     return;
   }
 
-  const { term, rawPath } = resolveKinshipTerm(path, idA, dataMap);
+  const { term, rawPath } = resolveKinshipTermV2(path, idA, dataMap);
 
   if (term) {
-    relSentence.innerHTML = `<strong>${nameA}</strong> harus memanggil <strong style="color:#f0c060">${term}</strong> ke <strong>${nameB}</strong>.`;
+    relSentence.innerHTML = `<strong>${safeNameA}</strong> harus memanggil <strong style="color:#f0c060">${escapeHtml(term)}</strong> ke <strong>${safeNameB}</strong>.`;
     const steps = path.map(s => {
-      const g = getGender(s.to, dataMap);
+      const g = relGetGender(s.to, dataMap);
       if (s.rel === 'parent') return g === 'F' ? '↑ibu' : '↑bapak';
       if (s.rel === 'child')  return g === 'F' ? '↓♀' : '↓♂';
       if (s.rel === 'spouse') return '↔';
@@ -602,7 +723,7 @@ relFindBtn.addEventListener('click', () => {
     });
     relPathChain.textContent = steps.join('  ');
   } else {
-    relSentence.innerHTML = `<strong>${nameA}</strong> ke <strong>${nameB}</strong>: <em style="color:rgba(255,255,255,0.4)">(belum ada istilah Jawa khusus)</em>`;
+    relSentence.innerHTML = `<strong>${safeNameA}</strong> ke <strong>${safeNameB}</strong>: <em style="color:rgba(255,255,255,0.4)">(belum ada istilah Jawa khusus)</em>`;
     relPathChain.textContent = `Jalur: ${rawPath}`;
   }
 });
