@@ -1,0 +1,129 @@
+id,first_name,last_name,birthday,gender,avatar,parents,spouses,children
+1A,Karso Denin,,,M,,,1B,2.1|2.2|2.3|2.4|2.5|2.6|2.7|2.8
+1B,Kasti,,,F,,,1A,2.1|2.2|2.3|2.4|2.5|2.6|2.7|2.8
+2.1,Tiono,,,M,,1A|1B,2.1S,3.1.1|3.1.2|3.1.3
+2.1S,Muinah,,,F,,,2.1,3.1.1|3.1.2|3.1.3
+2.2,Taseri Nur,Jaya,,M,,1A|1B,2.2S1|2.2S2,3.2.1|3.2.2|3.2.3|3.2.4|3.2.5
+2.2S1,noname,,,F,,,2.2,3.2.1
+2.2S2,Kasemi,,,F,,,2.2,3.2.2|3.2.3|3.2.4|3.2.5
+2.3,Tiani,,,F,,1A|1B,2.3S,3.3.1|3.3.2|3.3.3
+2.3S,Kasmani,,,M,,,2.3,3.3.1|3.3.2|3.3.3
+2.4,Taslim,,,M,,1A|1B,2.4S,3.4.1|3.4.2|3.4.3
+2.4S,Ponisri,,,F,,,2.4,3.4.1|3.4.2|3.4.3
+2.5,Sutjipto,,,M,,1A|1B,2.5S,3.5.1|3.5.2|3.5.3
+2.5S,Suyati,,,F,,,2.5,3.5.1|3.5.2|3.5.3
+2.6,Sudarmi,,,F,,1A|1B,2.6S,3.6.1|3.6.2|3.6.3|3.6.4
+2.6S,Seno,,,M,,,2.6,3.6.1|3.6.2|3.6.3|3.6.4
+2.7,Suliyono,Denin,,M,,1A|1B,2.7S1,3.7.1|3.7.2|3.7.3
+2.7S1,Warsiti,,,F,,,2.7,3.7.1
+2.7S2,Siti,Sulastri,,F,,,2.7,3.7.3
+2.8,Supiyati,,,F,,1A|1B,2.8S,3.8.1|3.8.2|3.8.3
+2.8S,M. Lukamto,S.,,M,,,2.8,3.8.1|3.8.2|3.8.3
+3.1.1,Sumiati,,,F,,2.1|2.1S,3.1.1S,4.1.1.1|4.1.1.2|4.1.1.3|4.1.1.4
+3.1.1S,Bani,,,M,,,3.1.1,4.1.1.1|4.1.1.2|4.1.1.3|4.1.1.4
+3.1.2,Sunardi,,,M,,2.1|2.1S,3.1.2S,4.1.2.1|4.1.2.2
+3.1.2S,Siti,,,F,,,3.1.2,4.1.2.1|4.1.2.2
+3.1.3,Rini Sri,Lestari,,F,,2.1|2.1S,3.1.3S,4.1.3.1|4.1.3.2|4.1.3.3|4.1.3.4
+3.1.3S,Samsuri,,,M,,,3.1.3,4.1.3.1|4.1.3.2|4.1.3.3|4.1.3.4
+3.2.1,Sulianto,,,M,,2.2|2.2S1,3.2.1S,4.2.1.1|4.2.1.2
+3.2.1S,Tirah,,,F,,,3.2.1,4.2.1.1|4.2.1.2
+3.2.2,Rita,Rahmawati,,F,,2.2|2.2S2,3.2.2S,4.2.2.1|4.2.2.2
+3.2.2S,Nuryanto,,,M,,,3.2.2,4.2.2.1|4.2.2.2
+3.2.3,Rinto,Rismawanto,,M,,2.2|2.2S2,3.2.3S,4.2.3.1|4.2.3.2
+3.2.3S,Winisakti,,,F,,,3.2.3,4.2.3.1|4.2.3.2
+3.2.4,Mislina,Nandari,,F,,2.2|2.2S2,,
+3.2.5,Hari,Suliadi,,M,,2.2|2.2S2,,
+3.3.1,Hartati Setiawati,,,F,,2.3|2.3S,,
+3.3.2,Hartono,Stiawan (Jenggo),,M,,2.3|2.3S,3.3.2S,4.3.2.1|4.3.2.2
+3.3.2S,Andi Tenry Anny,,,F,,,3.3.2,4.3.2.1|4.3.2.2
+3.3.3,Heri Djunaedi,,,M,,2.3|2.3S,3.3.3S,4.3.3.1|4.3.3.2
+3.3.3S,Kiky Srie Rezeki,,,F,,,3.3.3,4.3.3.1|4.3.3.2
+3.4.1,Aris,Mulyono,,M,,2.4|2.4S,3.4.1S,4.4.1.1|4.4.1.2
+3.4.1S,Solikhah,,,F,,,3.4.1,4.4.1.1|4.4.1.2
+3.4.2,Rudi,Hermawan,,M,,2.4|2.4S,3.4.2S,4.4.2.1|4.4.2.2|4.4.2.3
+3.4.2S,Diana,Purwitasari,,F,,,3.4.2,4.4.2.1|4.4.2.2|4.4.2.3
+3.4.3,Handyk Tri Sandya,Yudha,,M,,2.4|2.4S,3.4.3S,4.4.3.1|4.4.3.2
+3.4.3S,Safitri,Wisma,,F,,,3.4.3,4.4.3.1|4.4.3.2
+3.5.1,Herry,Siswanto,,M,,2.5|2.5S,3.5.1S,
+3.5.1S,Frida,,,F,,,3.5.1,
+3.5.2,Anita,Rizqiana,,F,,2.5|2.5S,3.5.2S,4.5.2.1|4.5.2.2|4.5.2.3
+3.5.2S,Kwarta,Adimphrana,,M,,,3.5.2,4.5.2.1|4.5.2.2|4.5.2.3
+3.5.3,Herna,Listyowati,,F,,2.5|2.5S,3.5.3S,4.5.3.1|4.5.3.2
+3.5.3S,Nizarman,,,M,,,3.5.3,4.5.3.1|4.5.3.2
+3.6.1,Rini Sri,Lestari,,F,,2.6|2.6S,3.6.1S,4.6.1.1|4.6.1.2|4.6.1.3
+3.6.1S,Zulkandar,,,M,,,3.6.1,4.6.1.1|4.6.1.2|4.6.1.3
+3.6.2,Toni,Sudarmanto,,M,,2.6|2.6S,3.6.2S,4.6.2.1|4.6.2.2
+3.6.2S,Hartini,,,F,,,3.6.2,4.6.2.1|4.6.2.2
+3.6.3,Nanang,Susanto,,M,,2.6|2.6S,3.6.3S,4.6.3.1|4.6.3.2
+3.6.3S,Christine,Herrawatie,,F,,,3.6.3,4.6.3.1|4.6.3.2
+3.6.4,Wahyuningtyas,,,F,,2.6|2.6S,3.6.4S,4.6.4.1|4.6.4.2|4.6.4.3
+3.6.4S,Didik,Setyawan,,M,,,3.6.4,4.6.4.1|4.6.4.2|4.6.4.3
+3.7.1,Anggi,Prihandini,,F,,2.7|2.7S1,3.7.1S,4.7.1.1|4.7.1.2|4.7.1.3
+3.7.1S,Yanuar Hadi,Marsongko,,M,,,3.7.1,4.7.1.1|4.7.1.2|4.7.1.3
+3.7.2,Ragil Dwi,Anggoro,,M,,2.7|2.7S1,3.7.2S,4.7.2.1|4.7.2.2
+3.7.2S,Fifin,Opiyana,,F,,,3.7.2,4.7.2.1|4.7.2.2
+3.7.3,Yaumil,Muttaqin,,M,,2.7|2.7S2,3.7.3S,4.7.3.1
+3.7.3S,Halimah,Tussakdyah,,F,,,3.7.3,4.7.3.1
+3.8.1,Dyah Igatri,Utami,,F,,2.8|2.8S,3.8.1S,4.8.1.1|4.8.1.2|4.8.1.3
+3.8.1S,Yunan,Naufal,,M,,,3.8.1,4.8.1.1|4.8.1.2|4.8.1.3
+3.8.2,Tias Pritia,Utami,,F,,2.8|2.8S,3.8.2S,4.8.2.1|4.8.2.2
+3.8.2S,Rizki,Yudhistira,,M,,,3.8.2,4.8.2.1|4.8.2.2
+3.8.3,Ariani Arumsari,Utami,,F,,2.8|2.8S,,
+4.1.1.1,Eko Santoso,,,M,,3.1.1|3.1.1S,,
+4.1.1.2,Adi Sutoyo,,,M,,3.1.1|3.1.1S,,
+4.1.1.3,Septina Amallia Yopi Kusumaningrum,,,F,,3.1.1|3.1.1S,,
+4.1.1.4,Pramudya Yusuf Sasmito Nugroho,,,M,,3.1.1|3.1.1S,,
+4.1.2.1,Putri,,,F,,3.1.2|3.1.2S,,
+4.1.2.2,Gunawan,,,M,,3.1.2|3.1.2S,,
+4.1.3.1,Akbar Firman Syam,Putra,,M,,3.1.3|3.1.3S,,
+4.1.3.2,Aisyah,Qur'ana,,F,,3.1.3|3.1.3S,,
+4.1.3.3,Ibnu,Imansyah,,M,,3.1.3|3.1.3S,,
+4.1.3.4,Ayatul,Jannah,,F,,3.1.3|3.1.3S,,
+4.2.1.1,Reski Suci,Utami,,F,,3.2.1|3.2.1S,,
+4.2.1.2,Sayyidah,Alifah,,F,,3.2.1|3.2.1S,,
+4.2.2.1,Andi,Noviandi,,M,,3.2.2|3.2.2S,,
+4.2.2.2,Faris,,,M,,3.2.2|3.2.2S,,
+4.2.3.1,Adella,Arifinna,,F,,3.2.3|3.2.3S,,
+4.2.3.2,Muhammad Al,Fatih,,M,,3.2.3|3.2.3S,,
+4.3.2.1,Aldi Raditya,Firstanto,,M,https://esnnniiukcncralgssxl.supabase.co/storage/v1/object/public/Denin%20family%20photos/4.3.2.1.jpeg,3.3.2|3.3.2S,4.3.2.1S,5.3.2.1.1|5.3.2.1.2
+4.3.2.1S,Lisa,Sukmawati,,F,,,4.3.2.1,5.3.2.1.1|5.3.2.1.2
+4.3.2.2,Adis Dwi,Maqfirah,,F,,3.3.2|3.3.2S,,
+4.3.3.1,Alifa Fairuz,,,F,,3.3.3|3.3.3S,4.3.3.1S,
+4.3.3.1S,M. Ridwan,,,M,,,4.3.3.1,
+4.3.3.2,Ariq M. Rifqy,,,M,,3.3.3|3.3.3S,,
+4.4.1.1,Daffa Reza,Pratama,,M,,3.4.1|3.4.1S,,
+4.4.1.2,Firman Reza,Aprisal,,M,,3.4.1|3.4.1S,,
+4.4.2.1,Afifah Ferryn,Faradina,,F,,3.4.2|3.4.2S,,
+4.4.2.2,Afifah Wanda Aulia,Hermawan,,F,,3.4.2|3.4.2S,,
+4.4.2.3,Afif Aidan Ahmad,Hermawan,,M,,3.4.2|3.4.2S,,
+4.4.3.1,Naja Sandya,Kinara,,F,,3.4.3|3.4.3S,,
+4.4.3.2,Fateema Sandya,Shabira,,F,,3.4.3|3.4.3S,,
+4.5.2.1,A Salsabila,Istiqlal,,F,,3.5.2|3.5.2S,,
+4.5.2.2,A Sayyidina,Habibina,,M,,3.5.2|3.5.2S,4.5.2.2S,
+4.5.2.2S,Annisa Ananta,Koesuma,,F,,,4.5.2.2,
+4.5.2.3,A Sayyidatina,Aathirah,,F,,3.5.2|3.5.2S,,
+4.5.3.1,Alray Hideaki,Nizar,,M,,3.5.3|3.5.3S,,
+4.5.3.2,Jiro Farabi,Nizar,,M,,3.5.3|3.5.3S,,
+4.6.1.1,Rizqi Kurnia Cahya,Ramadhan,,M,,3.6.1|3.6.1S,,
+4.6.1.2,Hasna Nisa,Mahdiyyah,,F,,3.6.1|3.6.1S,,
+4.6.1.3,Balqis Akifa,Naila,,F,,3.6.1|3.6.1S,,
+4.6.2.1,Rana Khansa,Dzahabiyah,,F,,3.6.2|3.6.2S,,
+4.6.2.2,Selly Rahmadatul,Fitriyah,,F,,3.6.2|3.6.2S,,
+4.6.3.1,Asy Syifa Larasati,Diya Ulhaq,,F,,3.6.3|3.6.3S,,
+4.6.3.2,Rafif Abdillah,Ulhaq,,M,,3.6.3|3.6.3S,,
+4.6.4.1,Danish Ara Fayyaza Zahra,Setyawan,,F,,3.6.4|3.6.4S,,
+4.6.4.2,Davin Chesney Aidan,Setyawan,,M,,3.6.4|3.6.4S,,
+4.6.4.3,Delisha Shadrina Auni,Setyawan,,F,,3.6.4|3.6.4S,,
+4.7.1.1,Satria Restu Hadi,Pratama,,M,,3.7.1|3.7.1S,,
+4.7.1.2,Sahesta Raffa,Praditya,,M,,3.7.1|3.7.1S,,
+4.7.1.3,Shakti Rajata,Al-faraby,,M,,3.7.1|3.7.1S,,
+4.7.2.1,Khanza Azkadina,Elfira,,F,,3.7.2|3.7.2S,,
+4.7.2.2,Khayla Azkiana,Elfira,,F,,3.7.2|3.7.2S,,
+4.7.3.1,Muhammad Gaffi,Zuhayr,,M,,3.7.3|3.7.3S,,
+4.8.1.1,Arfa Tsaqiif,Kevandra,,M,,3.8.1|3.8.1S,,
+4.8.1.2,Bryana Hanun,Almahyra,,F,,3.8.1|3.8.1S,,
+4.8.1.3,Kalila Fathimah,Salwa,,F,,3.8.1|3.8.1S,,
+4.8.2.1,Alifiya Fitri,Zanitha,,F,,3.8.2|3.8.2S,,
+4.8.2.2,Arisha Shauma,Maryam,,F,,3.8.2|3.8.2S,,
+5.3.2.1.1,Junho Zamzami,Karim,,M,,4.3.2.1|4.3.2.1S,,
+5.3.2.1.2,Lanaya Zalwa,Mughni,,F,,4.3.2.1|4.3.2.1S,,
