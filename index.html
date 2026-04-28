@@ -252,14 +252,23 @@ async function fetchFromSupabase() {
   return res.json();
 }
 
+function normalizeId(val) {
+  return String(val ?? '')
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
+    .trim();
+}
+
 function splitPipe(val) {
   if (!val || val === '' || val === '0') return [];
-  return val.split('|').filter(v => v && v !== '0');
+  return val
+    .split('|')
+    .map(v => normalizeId(v))
+    .filter(v => v && v !== '0');
 }
 
 function rowsToChartData(rows) {
   return rows.map(row => ({
-    id: String(row.id),
+    id: normalizeId(row.id),
     data: { 'first name': row.first_name ?? '', 'last name': row.last_name ?? '', birthday: row.birthday ? String(row.birthday) : '', gender: row.gender ?? '', avatar: row.avatar ?? '' },
     rels: { father: splitPipe(row.parents)[0] ?? null, mother: splitPipe(row.parents)[1] ?? null, spouses: splitPipe(row.spouses), children: splitPipe(row.children) }
   }));
@@ -406,24 +415,53 @@ function isMaleId(id, dataMap)  { return getGender(id, dataMap) === 'M'; }
 // ─── BFS shortest path ────────────────────────────────────────────────────
 function findPath(fromId, toId, data) {
   if (fromId === toId) return [];
+
   const adj = new Map();
+  const addEdge = (a, b, rel) => {
+    if (!a || !b) return;
+    const from = normalizeId(a);
+    const to = normalizeId(b);
+    if (!from || !to) return;
+    if (!adj.has(from)) adj.set(from, []);
+    const list = adj.get(from);
+    if (!list.some(e => e.id === to && e.rel === rel)) list.push({ id: to, rel });
+  };
+
   data.forEach(d => {
-    const nb = adj.get(d.id) || [];
-    if (d.rels.father) nb.push({ id: d.rels.father, rel: 'parent' });
-    if (d.rels.mother) nb.push({ id: d.rels.mother, rel: 'parent' });
-    d.rels.children.forEach(c => nb.push({ id: c, rel: 'child' }));
-    d.rels.spouses.forEach(s => nb.push({ id: s, rel: 'spouse' }));
-    adj.set(d.id, nb);
+    const selfId = normalizeId(d.id);
+    if (!adj.has(selfId)) adj.set(selfId, []);
+
+    if (d.rels.father) {
+      addEdge(selfId, d.rels.father, 'parent');
+      addEdge(d.rels.father, selfId, 'child');
+    }
+    if (d.rels.mother) {
+      addEdge(selfId, d.rels.mother, 'parent');
+      addEdge(d.rels.mother, selfId, 'child');
+    }
+
+    d.rels.children.forEach(childId => {
+      addEdge(selfId, childId, 'child');
+      addEdge(childId, selfId, 'parent');
+    });
+
+    d.rels.spouses.forEach(spouseId => {
+      addEdge(selfId, spouseId, 'spouse');
+      addEdge(spouseId, selfId, 'spouse');
+    });
   });
+
   const visited = new Set([fromId]);
-  const queue   = [{ id: fromId, path: [] }];
+  const queue = [{ id: fromId, path: [] }];
+
   while (queue.length) {
     const { id, path } = queue.shift();
     for (const { id: nid, rel } of (adj.get(id) || [])) {
       if (visited.has(nid)) continue;
       const np = [...path, { from: id, to: nid, rel }];
       if (nid === toId) return np;
-      visited.add(nid); queue.push({ id: nid, path: np });
+      visited.add(nid);
+      queue.push({ id: nid, path: np });
     }
   }
   return null;
@@ -444,132 +482,156 @@ function resolveKinshipTerm(path, fromId, dataMap) {
   const dirs = path.map(s => s.rel);
   const toId = path[path.length - 1].to;
   const male = isMaleId(toId, dataMap);
-  const len  = dirs.length;
 
   function rawStr() {
     return path.map(s => {
       const g = getGender(s.to, dataMap);
       if (s.rel === 'parent') return g === 'F' ? 'ibu' : 'bapak';
-      if (s.rel === 'child')  return g === 'F' ? 'anak perempuan' : 'anak laki-laki';
+      if (s.rel === 'child') return g === 'F' ? 'anak perempuan' : 'anak laki-laki';
       if (s.rel === 'spouse') return g === 'F' ? 'istri' : 'suami';
       return s.rel;
     }).join(' → ');
   }
 
-  // Shorthand: dirs joined
+  function ancestorTerm(n) {
+    if (n === 1) return male ? 'Bapak' : 'Ibu';
+    if (n === 2) return male ? 'Mbah Kakung' : 'Mbah Putri';
+    if (n === 3) return male ? 'Mbah Buyut (laki-laki)' : 'Mbah Buyut (perempuan)';
+    if (n === 4) return male ? 'Mbah Canggah (laki-laki)' : 'Mbah Canggah (perempuan)';
+    if (n === 5) return male ? 'Mbah Wareng (laki-laki)' : 'Mbah Wareng (perempuan)';
+    return `${n - 2} tingkat di atas kakek/nenek (${male ? 'leluhur laki-laki' : 'leluhur perempuan'})`;
+  }
+
+  function descendantTerm(n) {
+    if (n === 1) return male ? 'Anak laki-laki' : 'Anak perempuan';
+    if (n === 2) return male ? 'Cucu laki-laki' : 'Cucu perempuan';
+    if (n === 3) return male ? 'Buyut laki-laki' : 'Buyut perempuan';
+    if (n === 4) return male ? 'Canggah laki-laki' : 'Canggah perempuan';
+    return `${n - 2} tingkat di bawah cucu (${male ? 'keturunan laki-laki' : 'keturunan perempuan'})`;
+  }
+
+  function siblingTerm(refA, refB) {
+    const bOlder = isOlderById(seniorityId(refB, dataMap), seniorityId(refA, dataMap));
+    if (male) return bOlder ? 'Mas (kakak laki-laki)' : 'Adik laki-laki';
+    return bOlder ? 'Mbak (kakak perempuan)' : 'Adik perempuan';
+  }
+
+  function cousinTerm(ups, downs, myAnchorId, theirAnchorId) {
+    const degree = Math.min(ups, downs) - 1;
+    const removed = Math.abs(ups - downs);
+
+    // First cousin with Javanese seniority nuance
+    if (degree === 1 && removed === 0) {
+      const theirOlder = isOlderById(seniorityId(theirAnchorId, dataMap), seniorityId(myAnchorId, dataMap));
+      if (male) return theirOlder ? 'Mas Misan (sepupu)' : 'Adik Misan (sepupu)';
+      return theirOlder ? 'Mbak Misan (sepupu)' : 'Adik Misan (sepupu)';
+    }
+
+    const degreeLabel = degree === 1 ? 'sepupu' : `sepupu tingkat ${degree}`;
+    if (removed === 0) return `${degreeLabel} (${male ? 'laki-laki' : 'perempuan'})`;
+    return `${degreeLabel}, beda ${removed} generasi (${male ? 'laki-laki' : 'perempuan'})`;
+  }
+
+  // Fast paths for affine relations.
   const d = dirs.join(',');
-
-  // ── 1-hop ──────────────────────────────────────────────────────────────
-  if (d === 'parent') return { term: male ? 'Bapak' : 'Ibu', rawPath: '' };
-  if (d === 'child')  return { term: male ? 'Anak laki-laki' : 'Anak perempuan', rawPath: '' };
   if (d === 'spouse') return { term: male ? 'Suami' : 'Istri', rawPath: '' };
-
-  // ── 2-hop ──────────────────────────────────────────────────────────────
-  // Grandparent
-  if (d === 'parent,parent') return { term: male ? 'Mbah Kakung' : 'Mbah Putri', rawPath: '' };
-  // Grandchild
-  if (d === 'child,child') return { term: male ? 'Cucu laki-laki' : 'Cucu perempuan', rawPath: '' };
-  // Sibling: A→parent→B (B is sibling of A)
-  if (d === 'parent,child') {
-    // Compare blood IDs: B's seniority ID vs A's seniority ID
-    const bSen = seniorityId(toId, dataMap);
-    const aSen = seniorityId(fromId, dataMap);
-    const bOlder = isOlderById(bSen, aSen);
-    if (male) return { term: bOlder ? 'Mas (kakak laki-laki)' : 'Adik laki-laki', rawPath: '' };
-    else      return { term: bOlder ? 'Mbak (kakak perempuan)' : 'Adik perempuan', rawPath: '' };
-  }
-  // Menantu
-  if (d === 'child,spouse') return { term: male ? 'Menantu laki-laki' : 'Menantu perempuan', rawPath: '' };
-  // Mertua
   if (d === 'spouse,parent') return { term: male ? 'Mertua laki-laki' : 'Mertua perempuan', rawPath: '' };
-  // Sibling via spouse (A→spouse→parent→child is ipar, but parent,child via spouse first = same sibling logic)
-
-  // ── 3-hop ──────────────────────────────────────────────────────────────
-  // Great-grandparent
-  if (d === 'parent,parent,parent') return { term: male ? 'Mbah Buyut laki-laki' : 'Mbah Buyut perempuan', rawPath: '' };
-  // Great-grandchild
-  if (d === 'child,child,child') return { term: male ? 'Buyut laki-laki' : 'Buyut perempuan', rawPath: '' };
-
-  // Nephew/Niece: A→parent→sibling→child
-  if (d === 'parent,child,child') return { term: male ? 'Keponakan laki-laki' : 'Keponakan perempuan', rawPath: '' };
-  // Nephew/Niece via spouse sibling
-  if (d === 'spouse,child,child') return { term: male ? 'Keponakan laki-laki' : 'Keponakan perempuan', rawPath: '' };
-
-  // Uncle/Aunt: A→parent→grandparent→B
-  if (d === 'parent,parent,child') {
-    // A's parent = path[0].to, B = toId
-    const myParentId = path[0].to;
-    const myParentSen = seniorityId(myParentId, dataMap);
-    const bSen        = seniorityId(toId, dataMap);
-    const bOlder      = isOlderById(bSen, myParentSen);
-    if (male) return { term: bOlder ? 'Pakde' : 'Paklik', rawPath: '' };
-    else      return { term: bOlder ? 'Bude' : 'Bulik', rawPath: '' };
+  if (d === 'child,spouse') return { term: male ? 'Menantu laki-laki' : 'Menantu perempuan', rawPath: '' };
+  if (d === 'spouse,parent,child' || d === 'parent,child,spouse' || d === 'spouse,child,parent') {
+    return { term: male ? 'Ipar laki-laki' : 'Ipar perempuan', rawPath: '' };
   }
 
-  // Ipar (sibling-in-law)
-  if (d === 'spouse,parent,child') return { term: male ? 'Ipar laki-laki' : 'Ipar perempuan', rawPath: '' };
+  // Peel at most one spouse edge at start/end, then resolve blood relation for broader coverage.
+  const spouseAtStart = dirs[0] === 'spouse';
+  const spouseAtEnd = dirs[dirs.length - 1] === 'spouse';
+  const startIndex = spouseAtStart ? 1 : 0;
+  const endIndex = spouseAtEnd ? dirs.length - 1 : dirs.length;
+  const corePath = path.slice(startIndex, endIndex);
+  const coreDirs = corePath.map(s => s.rel);
 
-  // ── 4-hop ──────────────────────────────────────────────────────────────
-  // 2× great-grandparent (Canggah)
-  if (d === 'parent,parent,parent,parent') return { term: male ? 'Mbah Canggah laki-laki' : 'Mbah Canggah perempuan', rawPath: '' };
-  // 2× great-grandchild
-  if (d === 'child,child,child,child') return { term: male ? 'Canggah laki-laki' : 'Canggah perempuan', rawPath: '' };
-
-  // Spouse of uncle/aunt: A→parent→grandparent→blood_uncle→spouse
-  if (d === 'parent,parent,child,spouse') {
-    const myParentId   = path[0].to;
-    const bloodSibId   = path[2].to;          // blood uncle/aunt
-    const myParentSen  = seniorityId(myParentId, dataMap);
-    const bloodSibSen  = seniorityId(bloodSibId, dataMap);
-    const sibOlder     = isOlderById(bloodSibSen, myParentSen);
-    if (male) return { term: sibOlder ? 'Pakde' : 'Paklik', rawPath: '' };
-    else      return { term: sibOlder ? 'Bude' : 'Bulik', rawPath: '' };
+  // If spouse is in the middle, keep raw fallback (complex in-law chains).
+  if (coreDirs.includes('spouse')) {
+    return { term: 'Kerabat keluarga', rawPath: rawStr() };
   }
 
-  // First cousin: A→parent→grandparent→their_parent→B
-  if (d === 'parent,parent,child,child') {
-    const myParentId    = path[0].to;
-    const theirParentId = path[2].to;
-    const myParSen      = seniorityId(myParentId, dataMap);
-    const theirParSen   = seniorityId(theirParentId, dataMap);
-    const theirParOlder = isOlderById(theirParSen, myParSen);
-    if (male) return { term: theirParOlder ? 'Mas Misan (sepupu)' : 'Adik Misan (sepupu)', rawPath: '' };
-    else      return { term: theirParOlder ? 'Mbak Misan (sepupu)' : 'Adik Misan (sepupu)', rawPath: '' };
+  if (coreDirs.length === 0) {
+    return { term: male ? 'Pasangan' : 'Pasangan', rawPath: '' };
   }
 
-  // Grand-uncle/aunt (saudara kakek/nenek)
-  if (d === 'parent,parent,parent,child') {
-    return { term: male ? 'Mbah Pakde / Mbah Paklik' : 'Mbah Bude / Mbah Bulik', rawPath: '' };
+  const ups = coreDirs.filter(r => r === 'parent').length;
+  const downs = coreDirs.filter(r => r === 'child').length;
+
+  // Must be a clean blood route: all parent then all child in shortest path.
+  const splitAt = coreDirs.findIndex(r => r === 'child');
+  const parentBlock = splitAt === -1 ? coreDirs : coreDirs.slice(0, splitAt);
+  const childBlock = splitAt === -1 ? [] : coreDirs.slice(splitAt);
+  const bloodPattern = parentBlock.every(r => r === 'parent') && childBlock.every(r => r === 'child');
+  if (!bloodPattern) return { term: 'Kerabat keluarga', rawPath: rawStr() };
+
+  let baseTerm = null;
+
+  if (downs === 0) {
+    baseTerm = ancestorTerm(ups);
+  } else if (ups === 0) {
+    baseTerm = descendantTerm(downs);
+  } else if (ups === 1 && downs === 1) {
+    baseTerm = siblingTerm(fromId, toId);
+  } else if (ups >= 2 && downs === 1) {
+    // Uncle/aunt generation ladder.
+    if (ups === 2) {
+      // Parent's sibling -> Pakde/Paklik/Bude/Bulik by seniority.
+      const myParentId = corePath[0].to;
+      const targetOlder = isOlderById(seniorityId(toId, dataMap), seniorityId(myParentId, dataMap));
+      if (male) baseTerm = targetOlder ? 'Pakde' : 'Paklik';
+      else baseTerm = targetOlder ? 'Bude' : 'Bulik';
+    } else if (ups === 3) {
+      // Grandparent's sibling -> treated as grandparent generation in Javanese daily address.
+      baseTerm = male ? 'Mbah Kakung' : 'Mbah Putri';
+    } else {
+      baseTerm = `${ups - 3} tingkat di atas Mbah (${male ? 'laki-laki' : 'perempuan'})`;
+    }
+  } else if (ups === 1 && downs >= 2) {
+    // Sibling descendants.
+    if (downs === 2) {
+      baseTerm = male ? 'Keponakan laki-laki' : 'Keponakan perempuan';
+    } else {
+      // In Javanese daily addressing, deeper descendants of siblings are commonly
+      // addressed at grandchild generation (putu/cucu ladder).
+      baseTerm = descendantTerm(downs - 1);
+    }
+  } else if (ups >= 2 && downs >= 2) {
+    // One-generation-above cousin line (e.g. parent's cousin) is commonly
+    // addressed as uncle/aunt generation in daily usage.
+    if (ups === downs + 1) {
+      if (ups === 3 && downs === 2) {
+        // Use each side's branch anchor under the common ancestor to decide
+        // older/younger uncle generation (not the final person's own birth order).
+        const myBranchAnchor = corePath[ups - 2]?.to;
+        const theirBranchAnchor = corePath[ups]?.to;
+        const targetOlder = isOlderById(seniorityId(theirBranchAnchor, dataMap), seniorityId(myBranchAnchor, dataMap));
+        if (male) baseTerm = targetOlder ? 'Pakde' : 'Paklik';
+        else baseTerm = targetOlder ? 'Bude' : 'Bulik';
+      } else {
+        baseTerm = male ? 'Mbah Kakung' : 'Mbah Putri';
+      }
+    } else {
+      const myAnchorId = corePath[ups - 2]?.to;      // my child of common ancestor
+      const theirAnchorId = corePath[ups]?.to;       // their child of common ancestor
+      baseTerm = cousinTerm(ups, downs, myAnchorId, theirAnchorId);
+    }
   }
 
-  // ── 5-hop ──────────────────────────────────────────────────────────────
-  // 3× great-grandparent (Wareng)
-  if (d === 'parent,parent,parent,parent,parent') return { term: male ? 'Mbah Wareng laki-laki' : 'Mbah Wareng perempuan', rawPath: '' };
+  if (!baseTerm) return { term: 'Kerabat keluarga', rawPath: rawStr() };
 
-  // First cousin once removed (child of uncle/aunt's first cousin, or cousin of parent)
-  if (d === 'parent,parent,parent,child,child') {
-    return { term: male ? 'Sepupu jauh (mindoan) laki-laki' : 'Sepupu jauh (mindoan) perempuan', rawPath: '' };
-  }
-
-  // ── 6-hop ──────────────────────────────────────────────────────────────
-  // Second cousin: parent×3 → child×3
-  if (d === 'parent,parent,parent,child,child,child') {
-    const myParentId    = path[0].to;
-    const theirParentId = path[3].to;
-    const myParSen      = seniorityId(myParentId, dataMap);
-    const theirParSen   = seniorityId(theirParentId, dataMap);
-    const theirParOlder = isOlderById(theirParSen, myParSen);
-    if (male) return { term: theirParOlder ? 'Mas Mindoan (sepupu mindoan)' : 'Adik Mindoan (sepupu mindoan)', rawPath: '' };
-    else      return { term: theirParOlder ? 'Mbak Mindoan (sepupu mindoan)' : 'Adik Mindoan (sepupu mindoan)', rawPath: '' };
-  }
-
-  // ── Fallback ──────────────────────────────────────────────────────────
-  return { term: null, rawPath: rawStr() };
+  if (spouseAtStart && spouseAtEnd) return { term: `${baseTerm} dari jalur pasangan`, rawPath: '' };
+  if (spouseAtStart) return { term: `${baseTerm} dari pasangan`, rawPath: '' };
+  if (spouseAtEnd) return { term: `Pasangan dari ${baseTerm}`, rawPath: '' };
+  return { term: baseTerm, rawPath: '' };
 }
 
 // ─── Find handler ─────────────────────────────────────────────────────────
 relFindBtn.addEventListener('click', () => {
-  const idA = relSelectA.value, idB = relSelectB.value;
+  const idA = normalizeId(relSelectA.value), idB = normalizeId(relSelectB.value);
   if (!idA || !idB || idA === idB) return;
 
   const dataMap = new Map(chartData.map(d => [d.id, d]));
@@ -600,7 +662,7 @@ relFindBtn.addEventListener('click', () => {
       if (s.rel === 'spouse') return '↔';
       return s.rel;
     });
-    relPathChain.textContent = steps.join('  ');
+    relPathChain.textContent = rawPath ? `Jalur: ${rawPath}` : steps.join('  ');
   } else {
     relSentence.innerHTML = `<strong>${nameA}</strong> ke <strong>${nameB}</strong>: <em style="color:rgba(255,255,255,0.4)">(belum ada istilah Jawa khusus)</em>`;
     relPathChain.textContent = `Jalur: ${rawPath}`;
