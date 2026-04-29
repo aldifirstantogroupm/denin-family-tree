@@ -602,7 +602,13 @@ function resolveKinshipTerm(path, fromId, dataMap) {
   } else if (ups >= 2 && downs >= 2) {
     // One-generation-above cousin line (e.g. parent's cousin) is commonly
     // addressed as uncle/aunt generation in daily usage.
-    if (ups === downs + 1) {
+    if (ups >= downs + 2) {
+      // Much older cousin branches are addressed by direct ancestor generation.
+      baseTerm = ancestorTerm(ups - downs);
+    } else if (downs >= ups + 2) {
+      // Much younger cousin branches are addressed by direct descendant generation.
+      baseTerm = descendantTerm(downs - ups);
+    } else if (ups === downs + 1) {
       if (ups === 3 && downs === 2) {
         // Use each side's branch anchor under the common ancestor to decide
         // older/younger uncle generation (not the final person's own birth order).
