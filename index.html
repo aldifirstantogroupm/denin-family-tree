@@ -614,6 +614,14 @@ function resolveKinshipTerm(path, fromId, dataMap) {
       } else {
         baseTerm = male ? 'Mbah Kakung' : 'Mbah Putri';
       }
+    } else if (downs === ups + 1) {
+      // One-generation-below cousin line (e.g. cousin's child) is commonly
+      // addressed as nephew/niece generation.
+      if (ups === 2 && downs === 3) {
+        baseTerm = male ? 'Keponakan laki-laki' : 'Keponakan perempuan';
+      } else {
+        baseTerm = descendantTerm(downs - ups + 1);
+      }
     } else {
       const myAnchorId = corePath[ups - 2]?.to;      // my child of common ancestor
       const theirAnchorId = corePath[ups]?.to;       // their child of common ancestor
