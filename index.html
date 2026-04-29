@@ -609,17 +609,13 @@ function resolveKinshipTerm(path, fromId, dataMap) {
       // Much younger cousin branches are addressed by direct descendant generation.
       baseTerm = descendantTerm(downs - ups);
     } else if (ups === downs + 1) {
-      if (ups === 3 && downs === 2) {
-        // Use each side's branch anchor under the common ancestor to decide
-        // older/younger uncle generation (not the final person's own birth order).
-        const myBranchAnchor = corePath[ups - 2]?.to;
-        const theirBranchAnchor = corePath[ups]?.to;
-        const targetOlder = isOlderById(seniorityId(theirBranchAnchor, dataMap), seniorityId(myBranchAnchor, dataMap));
-        if (male) baseTerm = targetOlder ? 'Pakde' : 'Paklik';
-        else baseTerm = targetOlder ? 'Bude' : 'Bulik';
-      } else {
-        baseTerm = male ? 'Mbah Kakung' : 'Mbah Putri';
-      }
+      // One-generation-above cousin line should be addressed as uncle/aunt generation.
+      // Use each side's branch anchor under the common ancestor to decide seniority.
+      const myBranchAnchor = corePath[ups - 2]?.to;
+      const theirBranchAnchor = corePath[ups]?.to;
+      const targetOlder = isOlderById(seniorityId(theirBranchAnchor, dataMap), seniorityId(myBranchAnchor, dataMap));
+      if (male) baseTerm = targetOlder ? 'Pakde' : 'Paklik';
+      else baseTerm = targetOlder ? 'Bude' : 'Bulik';
     } else if (downs === ups + 1) {
       // One-generation-below cousin line (e.g. cousin's child) is commonly
       // addressed as nephew/niece generation.
